@@ -1,19 +1,29 @@
 <!DOCTYPE html>
 <html lang="fa" dir="rtl">
-
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-  <meta name="theme-color" content="#0e5f38" />
-  <title>سفربان | SafarBan</title>
-  <link rel="icon" type="image/svg+xml" href="/icons/icon-48.png" />
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link href="/fonts/Vazirmatn-font-face.css" rel="stylesheet" type="text/css" />
-</head>
-
-<body class="bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-100 font-vazir">
-  <div id="app"></div>
-  <script type="module" src="/src/main.js"></script>
-</body>
-
+  <head>
+    <script>
+      // Restores the deep-link URL saved by public/404.html (GitHub Pages SPA
+      // fallback trick) before Vue Router initializes, so refreshing a route
+      // like /regions or /trips/create no longer 404s.
+      (function () {
+        var redirect = sessionStorage.getItem('safarban-redirect')
+        sessionStorage.removeItem('safarban-redirect')
+        if (redirect && redirect !== location.href) {
+          var url = new URL(redirect)
+          history.replaceState(null, null, url.pathname + url.search + url.hash)
+        }
+      })()
+    </script>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <meta name="theme-color" content="#0e5f38" />
+    <title>سفربان | SafarBan</title>
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+  </head>
+  <body class="bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-100 font-vazir">
+    <div id="app"></div>
+    <script type="module" src="/src/main.js"></script>
+  </body>
 </html>
