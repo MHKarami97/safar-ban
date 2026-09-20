@@ -1,0 +1,22 @@
+[
+  {
+    "relation": ["delegate_permission/common.handle_all_urls"],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "mhk.checklist",
+      "sha256_cert_fingerprints": [
+        "5C:41:0E:22:56:B1:CB:9B:AC:15:C5:BE:EE:35:D8:64:24:A3:FB:A4:61:43:35:D1:C1:38:DE:0D:57:9F:E8:33"
+      ]
+    }
+  },
+  {
+    "relation": ["check_validation"],
+    "target": {
+      "namespace": "cafebazaar_twa",
+      "package_name": "mhk.checklist",
+      "sha256_cert_fingerprints": [
+        "5C:41:0E:22:56:B1:CB:9B:AC:15:C5:BE:EE:35:D8:64:24:A3:FB:A4:61:43:35:D1:C1:38:DE:0D:57:9F:E8:33"
+      ]
+    }
+  }
+]

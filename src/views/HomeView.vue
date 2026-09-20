@@ -26,9 +26,8 @@ async function handleImport(event) {
 <template>
   <section class="space-y-6">
     <div class="text-center py-6">
-      <div class="text-5xl mb-3">🧬</div>
       <h1 class="text-2xl font-bold">سفربان</h1>
-      <p class="text-sm text-slate-400 mt-1">لوکیشن‌های سفرت را ثبت کن، برنامه سفرت را بچین</p>
+      <p class="text-sm text-slate-400 mt-1">لوکیشن‌های سفرت رو ثبت کن، برنامه سفرت رو بچین</p>
     </div>
 
     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">

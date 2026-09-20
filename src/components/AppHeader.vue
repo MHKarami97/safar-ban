@@ -8,7 +8,13 @@ var ui = useUiStore()
   <header class="sticky top-0 z-20 backdrop-blur bg-white/80 dark:bg-slate-900/80 border-b border-slate-200 dark:border-slate-800">
     <div class="max-w-5xl mx-auto px-4 sm:px-6 h-14 flex items-center justify-between">
       <RouterLink to="/" class="flex items-center gap-2 font-bold text-lg">
-        <span>🧭</span>
+        <span><img
+          src="/icons/icon-96.png"
+          alt="سفربان"
+          class="w-8 h-8 object-contain"
+          width="32"
+          height="32"
+        /></span>
         <span>سفربان</span>
       </RouterLink>
 
