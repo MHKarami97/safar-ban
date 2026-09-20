@@ -16,6 +16,6 @@ defineProps({ region: { type: Object, required: true } })
       </div>
       <span class="text-xs text-slate-500 dark:text-slate-400">{{ region.visitedCount }}/{{ region.totalCount }}</span>
     </div>
-    <ProgressBar :percent="region.progressPercent" size="sm" />
+    <ProgressBar :percent="region.progressPercent" size="sm" :show-percent="false" />
   </RouterLink>
 </template>
