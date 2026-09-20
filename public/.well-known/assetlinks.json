@@ -3,9 +3,9 @@
     "relation": ["delegate_permission/common.handle_all_urls"],
     "target": {
       "namespace": "android_app",
-      "package_name": "mhk.checklist",
+      "package_name": "mhk.safar",
       "sha256_cert_fingerprints": [
-        "5C:41:0E:22:56:B1:CB:9B:AC:15:C5:BE:EE:35:D8:64:24:A3:FB:A4:61:43:35:D1:C1:38:DE:0D:57:9F:E8:33"
+        "EC:8E:BD:18:8E:49:FE:6F:30:16:FE:4A:0B:0E:7B:9D:C2:B2:E3:8F:46:FB:C0:AB:70:24:B9:F2:81:09:C3:D2"
       ]
     }
   },
@@ -13,9 +13,9 @@
     "relation": ["check_validation"],
     "target": {
       "namespace": "cafebazaar_twa",
-      "package_name": "mhk.checklist",
+      "package_name": "mhk.safar",
       "sha256_cert_fingerprints": [
-        "5C:41:0E:22:56:B1:CB:9B:AC:15:C5:BE:EE:35:D8:64:24:A3:FB:A4:61:43:35:D1:C1:38:DE:0D:57:9F:E8:33"
+        "EC:8E:BD:18:8E:49:FE:6F:30:16:FE:4A:0B:0E:7B:9D:C2:B2:E3:8F:46:FB:C0:AB:70:24:B9:F2:81:09:C3:D2"
       ]
     }
   }
