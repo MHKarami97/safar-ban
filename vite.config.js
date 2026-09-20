@@ -7,8 +7,6 @@ export default defineConfig({
     vue(),
     VitePWA({
       registerType: 'prompt',
-      injectRegister: 'auto',
-      includeAssets: ['favicon.svg'],
       manifest: {
         name: 'سفربان',
         short_name: 'سفربان',
@@ -23,20 +21,7 @@ export default defineConfig({
       },
       workbox: {
         globPatterns: ['**/*.{js,css,ico,png,svg,woff2}'],
-        cleanupOutdatedCaches: true,
-        // Explicit (not just relying on defaults): a new service worker must
-        // stay in the "waiting" state until updateServiceWorker() is called
-        // from the prompt. If either of these were true, the browser would
-        // activate the new SW immediately and needRefresh would never fire.
-        skipWaiting: false,
-        clientsClaim: false
-      },
-      devOptions: {
-        // Without this, `npm run dev` never registers a real service worker,
-        // so the update prompt can only ever be tested against a production
-        // build (`npm run build && npm run preview`) or the deployed site.
-        enabled: true,
-        type: 'module'
+        cleanupOutdatedCaches: true,        
       }
     })
   ]

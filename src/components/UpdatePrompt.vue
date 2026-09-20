@@ -2,7 +2,7 @@
 import { useRegisterSW } from 'virtual:pwa-register/vue'
 
 const { needRefresh, updateServiceWorker } = useRegisterSW({
-  onRegisteredSW(swUrl, registration) {
+  onRegisteredSW(registration) {
     if (!registration) return
 
     registration.update()
