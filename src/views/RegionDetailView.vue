@@ -17,7 +17,7 @@ var region = computed(() => store.activeRegion)
 
 var isVisitModalOpen = ref(false)
 var editingRecordId = ref(null)
-var editingLocationIds = ref([])
+var editingLocationNames = ref([])
 
 var selectedLocationNames = computed(() =>
   store.selectedLocationIds.map((id) => region.value?.findLocation(id)?.name).filter(Boolean)
@@ -28,9 +28,12 @@ function openFinishModal() {
   isVisitModalOpen.value = true
 }
 
+/** Editing a shared VisitRecord shows every location that belongs to it, not just the one clicked. */
 function openEditModal({ location, record }) {
   editingRecordId.value = record?.id || null
-  editingLocationIds.value = [location.id]
+  editingLocationNames.value = record
+    ? record.locationIds.map((id) => region.value?.findLocation(id)?.name).filter(Boolean)
+    : [location.name]
   isVisitModalOpen.value = true
 }
 
@@ -59,10 +62,6 @@ function handleUnmark(locationId) {
     </div>
 
     <div class="rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-4">
-      <div class="flex items-center justify-between mb-2">
-        <span class="text-sm font-medium text-slate-600 dark:text-slate-300">درصد لوکیشن‌های رفته‌شده این استان</span>
-        <span class="text-sm font-bold text-brand-600 dark:text-brand-300">{{ region.progressPercent }}٪</span>
-      </div>
       <ProgressBar :percent="region.progressPercent" />
     </div>
 
@@ -75,7 +74,7 @@ function handleUnmark(locationId) {
 
     <VisitRecordModal
       :is-open="isVisitModalOpen"
-      :location-names="editingRecordId ? editingLocationIds.map((id) => region.findLocation(id)?.name) : selectedLocationNames"
+      :location-names="editingRecordId ? editingLocationNames : selectedLocationNames"
       :initial="editingRecordId ? region.getVisitRecord(editingRecordId) : null"
       @save="saveVisit"
       @cancel="isVisitModalOpen = false"

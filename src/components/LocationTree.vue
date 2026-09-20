@@ -30,21 +30,26 @@ function submitLocation(cityId) {
   addingLocationForCity.value = null
 }
 
+function cityNameOf(location) {
+  return props.region.findCityOfLocation(location.id)?.name || ''
+}
+
 /**
- * Groups visited locations by their shared VisitRecord so a multi-location
- * trip (e.g. سعدی و حافظ با هم) renders as a single card, not one row per location.
+ * Groups every visited location by its shared VisitRecord so locations
+ * marked as "visited together" (e.g. سعدی و حافز در یک سفر) render as a
+ * single box instead of one row per location.
  */
 var visitGroups = computed(() => {
-  var groups = new Map()
-  props.region.cities.forEach((city) => {
-    city.locations.filter((loc) => loc.isVisited).forEach((location) => {
-      var record = location.visitRecordId ? props.region.getVisitRecord(location.visitRecordId) : null
-      var key = record?.id || location.id
-      if (!groups.has(key)) groups.set(key, { record, entries: [] })
-      groups.get(key).entries.push({ city, location })
-    })
-  })
-  return Array.from(groups.values()).sort((a, b) => (b.record?.createdAt || 0) - (a.record?.createdAt || 0))
+  return props.region.visitRecords
+    .map((record) => ({
+      record,
+      locations: record.locationIds
+        .map((id) => props.region.findLocation(id))
+        .filter(Boolean)
+        .map((location) => ({ location, cityName: cityNameOf(location) }))
+    }))
+    .filter((group) => group.locations.length)
+    .sort((a, b) => b.record.createdAt - a.record.createdAt)
 })
 </script>
 
@@ -53,38 +58,18 @@ var visitGroups = computed(() => {
     <div v-for="city in region.cities" :key="city.id" class="rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-4">
       <div class="flex items-center justify-between mb-3">
         <h3 class="font-semibold text-sm sm:text-base">🏙️ {{ city.name }}</h3>
-        <button
-          type="button"
-          class="inline-flex items-center gap-1.5 min-h-[40px] px-3.5 rounded-xl bg-brand-500 hover:bg-brand-600 text-white text-xs sm:text-sm font-semibold shadow-sm transition-colors"
-          @click="openLocationForm(city.id)"
-        >
-          <span class="text-base leading-none">+</span>
-          <span>افزودن لوکیشن</span>
-        </button>
+        <button type="button" class="text-xs text-brand-600 dark:text-brand-300" @click="openLocationForm(city.id)">+ افزودن لوکیشن</button>
       </div>
 
       <div v-if="addingLocationForCity === city.id" class="flex flex-col sm:flex-row gap-2 mb-3">
-        <input v-model="newLocationName" type="text" placeholder="نام لوکیشن (مثلا آرامگاه حافظ)" class="flex-1 min-h-[40px] rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 px-3 text-sm" />
+        <input v-model="newLocationName" type="text" placeholder="نام لوکیشن (متلا آرامگاه حافظ)" class="flex-1 min-h-[40px] rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 px-3 text-sm" />
         <input v-model="newLocationDesc" type="text" placeholder="توضیح کوتاه (اختیاری)" class="flex-1 min-h-[40px] rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 px-3 text-sm" />
-        <button type="button" class="min-h-[40px] px-4 rounded-lg bg-brand-500 text-white text-sm font-medium" @click="submitLocation(city.id)">افزودن</button>
+        <button type="button" class="min-h-[40px] px-4 rounded-lg bg-brand-500 text-white text-sm" @click="submitLocation(city.id)">افزودن</button>
       </div>
 
-      <ul class="space-y-2">
-        <li
-          v-for="location in city.locations.filter((l) => !l.isVisited)"
-          :key="location.id"
-          class="flex items-center gap-3 px-2.5 py-2 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-700/50"
-        >
-          <button
-            type="button"
-            class="w-6 h-6 flex-shrink-0 rounded-md border-2 flex items-center justify-center transition-colors"
-            :class="store.selectedLocationIds.includes(location.id) ? 'bg-brand-500 border-brand-500' : 'border-slate-300 dark:border-slate-600'"
-            @click="store.toggleLocationSelection(location.id)"
-          >
-            <svg v-if="store.selectedLocationIds.includes(location.id)" class="w-4 h-4 text-white" viewBox="0 0 20 20" fill="currentColor">
-              <path fill-rule="evenodd" d="M16.7 5.3a1 1 0 010 1.4l-7.4 7.4a1 1 0 01-1.4 0L3.3 9.5a1 1 0 111.4-1.4l3.2 3.2 6.7-6.7a1 1 0 011.4 0z" clip-rule="evenodd" />
-            </svg>
-          </button>
+      <ul class="space-y-1.5">
+        <li v-for="location in city.locations.filter((l) => !l.isVisited)" :key="location.id" class="flex items-center gap-2 px-2 py-1.5 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-700/50">
+          <input type="checkbox" :checked="store.selectedLocationIds.includes(location.id)" @change="store.toggleLocationSelection(location.id)" />
           <span class="text-sm flex-1">{{ location.name }}</span>
           <span v-if="location.description" class="text-xs text-slate-400">{{ location.description }}</span>
         </li>
@@ -94,52 +79,35 @@ var visitGroups = computed(() => {
 
     <div class="flex items-center gap-2">
       <input v-model="newCityName" type="text" placeholder="افزودن شهر جدید..." class="flex-1 min-h-[44px] rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 px-4 text-sm" @keyup.enter="addCity" />
-      <button type="button" class="min-h-[44px] px-4 rounded-xl bg-slate-200 dark:bg-slate-700 text-sm font-medium" @click="addCity">افزودن شهر</button>
+      <button type="button" class="min-h-[44px] px-4 rounded-xl bg-slate-200 dark:bg-slate-700 text-sm" @click="addCity">افزودن شهر</button>
     </div>
 
     <button
       v-if="store.selectedLocationIds.length"
       type="button"
-      class="w-full min-h-[48px] rounded-xl bg-brand-500 text-white font-semibold shadow-sm"
+      class="w-full min-h-[48px] rounded-xl bg-brand-500 text-white font-semibold"
       @click="$emit('finish-selection')"
     >
       ✅ اتمام و ثبت جزئیات بازدید ({{ store.selectedLocationIds.length }} مورد انتخاب‌شده)
     </button>
 
-    <div v-if="region.visitedCount" class="pt-4 border-t border-slate-200 dark:border-slate-700">
+    <div v-if="visitGroups.length" class="pt-4 border-t border-slate-200 dark:border-slate-700">
       <h3 class="font-semibold text-sm mb-3">📌 رفته‌شده‌ها</h3>
-      <div class="space-y-4">
-        <div
-          v-for="group in visitGroups"
-          :key="group.record?.id || group.entries[0].location.id"
-          class="rounded-xl bg-slate-50 dark:bg-slate-800/60 p-4"
-        >
-          <p class="text-sm font-medium mb-1">
-            {{ group.entries.map((e) => `${e.city.name} — ${e.location.name}`).join('، ') }}
-          </p>
-          <p v-if="group.record" class="text-xs text-slate-400">
-            {{ jalaliDateToLabel(group.record.dateJalali) }} · {{ group.record.totalCost.toLocaleString('en-US') }} تومان · {{ group.record.km.toLocaleString('en-US') }} کیلومتر · {{ group.record.days }} روز
-          </p>
-          <p v-if="group.record?.description" class="text-xs text-slate-500 mt-1">{{ group.record.description }}</p>
-
-          <div class="flex items-center gap-3 mt-2">
-            <button
-              type="button"
-              class="text-xs text-brand-600 dark:text-brand-300 font-medium"
-              @click="$emit('edit-record', { location: group.entries[0].location, record: group.record })"
-            >
-              ویرایش
-            </button>
-            <button
-              v-for="e in group.entries"
-              :key="'unmark-' + e.location.id"
-              type="button"
-              class="text-xs text-red-500 font-medium"
-              @click="$emit('unmark', e.location.id)"
-            >
-              برگرداندن «{{ e.location.name }}»
-            </button>
+      <div class="space-y-3">
+        <div v-for="group in visitGroups" :key="group.record.id" class="rounded-xl bg-slate-50 dark:bg-slate-800/60 p-3">
+          <div class="flex items-start justify-between gap-2 mb-2">
+            <ul class="space-y-1 flex-1">
+              <li v-for="entry in group.locations" :key="entry.location.id" class="flex items-center justify-between gap-2">
+                <span class="text-sm font-medium">{{ entry.cityName }} — {{ entry.location.name }}</span>
+                <button type="button" class="text-[11px] text-red-500 flex-shrink-0" @click="$emit('unmark', entry.location.id)">بازگرداندن</button>
+              </li>
+            </ul>
+            <button type="button" class="text-xs text-brand-600 flex-shrink-0" @click="$emit('edit-record', { location: group.locations[0].location, record: group.record })">ویرایش</button>
           </div>
+          <p class="text-xs text-slate-400">
+            {{ jalaliDateToLabel(group.record.dateJalali) }} · {{ group.record.totalCost.toLocaleString('fa-IR') }} تومان · {{ group.record.days }} روز · {{ group.record.km }} یلومتر
+          </p>
+          <p v-if="group.record.description" class="text-xs text-slate-500 mt-1">{{ group.record.description }}</p>
         </div>
       </div>
     </div>
