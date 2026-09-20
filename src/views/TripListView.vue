@@ -29,7 +29,7 @@ var statusOptions = [
       <input
         :value="store.searchQuery"
         type="search"
-        placeholder="جسجوی سفر..."
+        placeholder="جستجوی سفر..."
         class="min-h-[44px] rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 px-4 text-sm w-full sm:w-64"
         @input="store.setSearchQuery($event.target.value)"
       />
@@ -53,7 +53,7 @@ var statusOptions = [
     <p v-if="!store.ongoingTrips.length" class="text-sm text-slate-400 text-center py-8">سفری برای نمایش نیست</p>
 
     <div v-if="store.completedTrips.length" class="pt-6 border-t border-slate-200 dark:border-slate-700">
-      <h2 class="text-sm font-semibold mb-3">سفرهای قایان‌یافته</h2>
+      <h2 class="text-sm font-semibold mb-3">سفرهای پایان‌یافته</h2>
       <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
         <TripCard v-for="trip in store.completedTrips" :key="trip.id" :trip="trip" />
       </div>

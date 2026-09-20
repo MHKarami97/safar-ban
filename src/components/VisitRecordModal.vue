@@ -1,6 +1,7 @@
 <script setup>
 import { ref, watch } from 'vue'
 import JalaliDatePicker from './JalaliDatePicker.vue'
+import NumberInput from './NumberInput.vue'
 import { todayJalali, formatJalali } from '../utils/jalali'
 
 var props = defineProps({
@@ -37,19 +38,13 @@ function save() { emit('save', { ...form.value }) }
             <JalaliDatePicker v-model="form.dateJalali" />
           </div>
           <div class="grid grid-cols-2 gap-3">
-            <div>
-              <label class="text-sm block mb-1">هزینه کلی (تومان)</label>
-              <input v-model.number="form.totalCost" type="number" min="0" class="w-full min-h-[44px] rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 px-3 text-sm" />
-            </div>
+            <NumberInput v-model="form.totalCost" label="هزینه کلی" suffix="تومان" />
             <div>
               <label class="text-sm block mb-1">تعداد روز</label>
               <input v-model.number="form.days" type="number" min="1" class="w-full min-h-[44px] rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 px-3 text-sm" />
             </div>
           </div>
-          <div>
-            <label class="text-sm block mb-1">کیلومتر</label>
-            <input v-model.number="form.km" type="number" min="0" class="w-full min-h-[44px] rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 px-3 text-sm" />
-          </div>
+          <NumberInput v-model="form.km" label="کیلومتر" suffix="کیلومتر" />
           <div>
             <label class="text-sm block mb-1">توضیحات</label>
             <textarea v-model="form.description" rows="3" class="w-full rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 px-3 py-2 text-sm"></textarea>

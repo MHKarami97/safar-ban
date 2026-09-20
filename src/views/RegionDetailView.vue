@@ -59,6 +59,10 @@ function handleUnmark(locationId) {
     </div>
 
     <div class="rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-4">
+      <div class="flex items-center justify-between mb-2">
+        <span class="text-sm font-medium text-slate-600 dark:text-slate-300">درصد لوکیشن‌های رفته‌شده این استان</span>
+        <span class="text-sm font-bold text-brand-600 dark:text-brand-300">{{ region.progressPercent }}٪</span>
+      </div>
       <ProgressBar :percent="region.progressPercent" />
     </div>
 

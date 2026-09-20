@@ -20,11 +20,24 @@ var { isPending, pendingLabel, requestConfirm, confirmAction, cancelAction } = u
 var trip = computed(() => tripStore.trips.find((t) => t.id === props.id))
 var isEventFormOpen = ref(false)
 var editingEventId = ref(null)
+var isStatusMenuOpen = ref(false)
 
 var statusEntries = computed(() => Object.entries(TRIP_STATUSES))
 
+var STATUS_STYLES = {
+  planning: { dot: 'bg-slate-400', chip: 'bg-slate-100 dark:bg-slate-700' },
+  upcoming: { dot: 'bg-amber-400', chip: 'bg-amber-50 dark:bg-amber-700/20' },
+  ongoing: { dot: 'bg-brand-500', chip: 'bg-brand-50 dark:bg-brand-700/20' },
+  completed: { dot: 'bg-slate-800 dark:bg-slate-100', chip: 'bg-slate-800/5 dark:bg-slate-100/10' }
+}
+
 function destinationName(id) {
   return trip.value?.destinations.find((d) => d.id === id)?.name || id
+}
+
+function setStatus(status) {
+  tripStore.setStatus(props.id, status)
+  isStatusMenuOpen.value = false
 }
 
 function openNewEvent() {
@@ -38,11 +51,8 @@ function openEditEvent(event) {
 }
 
 function saveEvent(data) {
-  if (editingEventId.value) {
-    tripStore.updateEvent(props.id, editingEventId.value, data)
-  } else {
-    tripStore.addEvent(props.id, data)
-  }
+  if (editingEventId.value) tripStore.updateEvent(props.id, editingEventId.value, data)
+  else tripStore.addEvent(props.id, data)
   isEventFormOpen.value = false
 }
 
@@ -60,6 +70,11 @@ function deleteTrip() {
 
 <template>
   <section v-if="trip" class="space-y-6">
+    <RouterLink to="/" class="inline-flex items-center gap-1.5 text-xs text-slate-500 dark:text-slate-400 hover:text-brand-600">
+      <span>🏠</span>
+      <span>بازگشت به خانه</span>
+    </RouterLink>
+
     <div class="flex items-start justify-between gap-3">
       <div>
         <h1 class="text-xl sm:text-2xl font-bold">{{ trip.title }}</h1>
@@ -72,12 +87,34 @@ function deleteTrip() {
       <div>تاریخ شروع: {{ jalaliDateToLabel(trip.startDateJalali) }}</div>
       <div>تاریخ پایان: {{ jalaliDateToLabel(trip.endDateJalali) }}</div>
       <div>تعداد روز: {{ trip.durationDays }}</div>
-      <div>هزینه در نظر گرفته‌شده: {{ Number(trip.budget).toLocaleString('fa-IR') }} تومان</div>
-      <div class="sm:col-span-2">
-        <label class="text-xs text-slate-400 block mb-1">وضعیت سفر</label>
-        <select :value="trip.status" class="min-h-[40px] rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 px-3 text-sm" @change="tripStore.setStatus(trip.id, $event.target.value)">
-          <option v-for="[key, label] in statusEntries" :key="key" :value="key">{{ label }}</option>
-        </select>
+      <div>هزینه در نظر گرفته‌شده: {{ Number(trip.budget).toLocaleString('en-US') }} تومان</div>
+
+      <div class="sm:col-span-2 relative">
+        <label class="text-xs text-slate-400 block mb-1.5">وضعیت سفر</label>
+        <button
+          type="button"
+          class="w-full min-h-[44px] rounded-xl px-3 flex items-center justify-between text-sm font-medium"
+          :class="STATUS_STYLES[trip.status].chip"
+          @click="isStatusMenuOpen = !isStatusMenuOpen"
+        >
+          <span class="flex items-center gap-2">
+            <span class="w-2.5 h-2.5 rounded-full" :class="STATUS_STYLES[trip.status].dot"></span>
+            {{ TRIP_STATUSES[trip.status] }}
+          </span>
+          <span class="text-xs text-slate-400">{{ isStatusMenuOpen ? '▲' : '▼' }}</span>
+        </button>
+        <div v-if="isStatusMenuOpen" class="absolute z-10 mt-1 w-full rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 shadow-lg overflow-hidden">
+          <button
+            v-for="[key, label] in statusEntries"
+            :key="key"
+            type="button"
+            class="w-full text-right px-3 py-2.5 text-sm flex items-center gap-2 hover:bg-slate-50 dark:hover:bg-slate-700"
+            @click="setStatus(key)"
+          >
+            <span class="w-2.5 h-2.5 rounded-full" :class="STATUS_STYLES[key].dot"></span>
+            {{ label }}
+          </button>
+        </div>
       </div>
     </div>
 
@@ -123,22 +160,32 @@ function deleteTrip() {
     <div class="rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-4">
       <div class="flex items-center justify-between mb-3">
         <h2 class="text-sm font-semibold">گزارش رویدادها</h2>
-        <button type="button" class="text-xs px-3 py-1.5 rounded-full bg-brand-500 text-white" @click="openNewEvent">+ ثبت رویداد</button>
+        <button type="button" class="text-xs px-3 py-1.5 rounded-full bg-brand-500 text-white font-medium" @click="openNewEvent">+ ثبت رویداد</button>
       </div>
-      <div v-for="event in trip.events" :key="event.id" class="border border-slate-100 dark:border-slate-700/60 rounded-xl p-3 mb-2">
-        <div class="flex items-start justify-between gap-2">
-          <div>
-            <p class="text-sm font-medium">{{ jalaliDateToLabel(event.dateJalali) }}</p>
-            <p class="text-xs text-slate-400">هزینه: {{ event.cost.toLocaleString('fa-IR') }} تومان · وسیله: {{ event.vehicleUsed || '—' }}</p>
-            <p v-if="event.visitedDestinationIds.length" class="text-xs text-brand-600 mt-1">رفتیم: {{ event.visitedDestinationIds.map(destinationName).join('، ') }}</p>
-            <p v-if="event.missedDestinationIds.length" class="text-xs text-red-500 mt-1">نرسیدیم: {{ event.missedDestinationIds.map(destinationName).join('، ') }}</p>
-            <p v-if="event.description" class="text-xs text-slate-500 mt-1">{{ event.description }}</p>
-          </div>
-          <div class="flex items-center gap-2 flex-shrink-0">
-            <button type="button" class="text-xs text-brand-600" @click="openEditEvent(event)">ویرایش</button>
-            <button type="button" class="text-xs text-red-500" @click="removeEvent(event.id)">حذف</button>
+
+      <div v-for="event in trip.events" :key="event.id" class="rounded-xl border border-slate-100 dark:border-slate-700/60 bg-slate-50/60 dark:bg-slate-900/30 p-4 mb-3">
+        <div class="flex items-start justify-between gap-2 mb-2">
+          <p class="text-sm font-semibold">{{ jalaliDateToLabel(event.dateJalali) }}</p>
+          <div class="flex items-center gap-3 flex-shrink-0">
+            <button type="button" class="text-xs text-brand-600 font-medium" @click="openEditEvent(event)">ویرایش</button>
+            <button type="button" class="text-xs text-red-500 font-medium" @click="removeEvent(event.id)">حذف</button>
           </div>
         </div>
+
+        <div class="flex flex-wrap gap-3 text-xs text-slate-500 dark:text-slate-400 mb-2">
+          <span class="inline-flex items-center gap-1">💰 {{ event.cost.toLocaleString('en-US') }} تومان</span>
+          <span class="inline-flex items-center gap-1">🚗 {{ event.vehicleUsed || '—' }}</span>
+        </div>
+
+        <p v-if="event.visitedDestinationIds.length" class="text-xs text-brand-700 dark:text-brand-300 bg-brand-50 dark:bg-brand-700/20 rounded-lg px-2.5 py-1.5 mb-1.5">
+          ✅ رفتیم: {{ event.visitedDestinationIds.map(destinationName).join('، ') }}
+        </p>
+        <p v-if="event.missedDestinationIds.length" class="text-xs text-red-600 dark:text-red-300 bg-red-50 dark:bg-red-700/20 rounded-lg px-2.5 py-1.5 mb-1.5">
+          ❌ نرسیدیم: {{ event.missedDestinationIds.map(destinationName).join('، ') }}
+        </p>
+        <p v-if="event.locationNotes" class="text-xs text-slate-500 mt-1">📍 {{ event.locationNotes }}</p>
+        <p v-if="event.accommodationNotes" class="text-xs text-slate-500 mt-1">🏨 {{ event.accommodationNotes }}</p>
+        <p v-if="event.description" class="text-xs text-slate-500 mt-1">{{ event.description }}</p>
       </div>
       <p v-if="!trip.events.length" class="text-xs text-slate-400">رویدادی ثبت نشده</p>
     </div>

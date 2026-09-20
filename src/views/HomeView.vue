@@ -15,7 +15,7 @@ async function handleImport(event) {
     await BackupService.importAll(file)
     window.location.reload()
   } catch (error) {
-    alert('وارد کردن فایل بکاپ با خطا مواجه شد: ' + error.message)
+    alert('وارد کردن فایل بکام با خطا مواجه شد: ' + error.message)
   } finally {
     isImporting.value = false
     event.target.value = ''
@@ -26,8 +26,9 @@ async function handleImport(event) {
 <template>
   <section class="space-y-6">
     <div class="text-center py-6">
+      <div class="text-5xl mb-3">🧭</div>
       <h1 class="text-2xl font-bold">سفربان</h1>
-      <p class="text-sm text-slate-400 mt-1">لوکیشن‌های سفرت رو ثبت کن، برنامه سفرت رو بچین</p>
+      <p class="text-sm text-slate-400 mt-1">لوکیشن‌های سفرت را ثبت کن، برنامه سفرت را بچین</p>
     </div>
 
     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -44,13 +45,16 @@ async function handleImport(event) {
       </RouterLink>
     </div>
 
-    <div class="rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-4">
-      <h3 class="text-sm font-semibold mb-3">پشتیبان‌گیری کامل اپلیکیشن</h3>
-      <p class="text-xs text-slate-400 mb-3">خروجی شامل تمام لوکیشن‌ها، استان‌ها/کشورها، سفرها، رویدادها و لیست‌های شخصی است.</p>
-      <div class="flex gap-2">
-        <button type="button" class="flex-1 min-h-[44px] rounded-xl bg-brand-500 text-white text-sm font-medium" @click="BackupService.exportAll">خروجی کامل</button>
-        <button type="button" class="flex-1 min-h-[44px] rounded-xl border border-slate-300 dark:border-slate-600 text-sm" :disabled="isImporting" @click="triggerImport">
-          {{ isImporting ? 'در حال بازیابی...' : 'ورودی کامل' }}
+    <div class="flex items-center justify-between gap-3 rounded-xl border border-slate-200/70 dark:border-slate-700/70 bg-slate-50/60 dark:bg-slate-800/40 px-3 py-2.5">
+      <p class="text-[11px] text-slate-400 leading-5">
+        پشتیبان‌گیری کامل از تمام داده‌های اپ (لوکیشن‌ها، سفرها، رویدادها)
+      </p>
+      <div class="flex items-center gap-1.5 flex-shrink-0">
+        <button type="button" class="text-[11px] px-2.5 py-1.5 rounded-lg bg-slate-200 dark:bg-slate-700 text-slate-600 dark:text-slate-300 font-medium" @click="BackupService.exportAll">
+          خروجی
+        </button>
+        <button type="button" class="text-[11px] px-2.5 py-1.5 rounded-lg bg-slate-200 dark:bg-slate-700 text-slate-600 dark:text-slate-300 font-medium" :disabled="isImporting" @click="triggerImport">
+          {{ isImporting ? '...' : 'ورودی' }}
         </button>
         <input ref="importInput" type="file" accept="application/json" class="hidden" @change="handleImport" />
       </div>

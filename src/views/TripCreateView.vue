@@ -6,6 +6,7 @@ import { useCatalogStore } from '../stores/catalogStore'
 import { WeatherService } from '../services/trip/WeatherService'
 import JalaliDatePicker from '../components/JalaliDatePicker.vue'
 import TagMultiSelect from '../components/TagMultiSelect.vue'
+import NumberInput from '../components/NumberInput.vue'
 import { todayJalali, formatJalali, addDaysJalali, parseJalali } from '../utils/jalali'
 
 var router = useRouter()
@@ -44,13 +45,8 @@ async function fetchWeather() {
   isFetchingWeather.value = false
 }
 
-function addCulturalNote() {
-  form.value.culturalNotes.push('')
-}
-
-function removeCulturalNote(index) {
-  form.value.culturalNotes.splice(index, 1)
-}
+function addCulturalNote() { form.value.culturalNotes.push('') }
+function removeCulturalNote(index) { form.value.culturalNotes.splice(index, 1) }
 
 var CATALOG_FIELD_MAP = { vehicles: 'vehicleIds', companions: 'companionIds', documents: 'documentIds', equipment: 'equipmentIds' }
 
@@ -61,22 +57,19 @@ function addCustomCatalog(kind, name) {
 
 function submit() {
   if (!form.value.title.trim()) return
-  var trip = tripStore.createTrip({
-    ...form.value,
-    culturalNotes: form.value.culturalNotes.filter((note) => note.trim())
-  })
+  var trip = tripStore.createTrip({ ...form.value, culturalNotes: form.value.culturalNotes.filter((note) => note.trim()) })
   router.push(`/trips/${trip.id}/destinations`)
 }
 </script>
 
 <template>
-  <section class="space-y-6 max-w-3xl">
+  <section class="max-w-3xl mx-auto space-y-6">
     <div class="flex items-center justify-between">
       <h1 class="text-xl sm:text-2xl font-bold">ساخت برنامه سفر جدید</h1>
       <RouterLink to="/trips/guide" class="text-xs text-brand-600 underline">اول راهنما را ببین</RouterLink>
     </div>
 
-    <div class="rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-5 space-y-4">
+    <div class="rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-5 sm:p-6 space-y-4">
       <div>
         <label class="text-sm block mb-1">عنوان سفر</label>
         <input v-model="form.title" type="text" placeholder="مثلا سفر تابستانی شمال" class="w-full min-h-[44px] rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 px-3 text-sm" />
@@ -102,16 +95,19 @@ function submit() {
         </div>
       </div>
 
-      <div>
-        <label class="text-sm block mb-1">هزینه در نظر گرفته‌شده (تومان)</label>
-        <input v-model.number="form.budget" type="number" min="0" class="w-full min-h-[44px] rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 px-3 text-sm" />
-      </div>
+      <NumberInput v-model="form.budget" label="هزینه در نظر گرفته‌شده" suffix="تومان" />
 
       <div>
         <label class="text-sm block mb-1">پیش‌بینی آب‌وهوا (نام شهر مقصد)</label>
         <div class="flex gap-2">
           <input v-model="form.weatherCity" type="text" placeholder="مثلا رشت" class="flex-1 min-h-[44px] rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 px-3 text-sm" />
-          <button type="button" class="min-h-[44px] px-4 rounded-xl bg-slate-200 dark:bg-slate-700 text-sm" :disabled="isFetchingWeather" @click="fetchWeather">
+          <button
+            type="button"
+            class="min-h-[44px] px-4 rounded-xl text-sm font-medium transition-colors"
+            :class="!form.weatherCity.trim() || isFetchingWeather ? 'bg-slate-100 dark:bg-slate-800 text-slate-400 cursor-not-allowed' : 'bg-brand-500 text-white hover:bg-brand-600'"
+            :disabled="!form.weatherCity.trim() || isFetchingWeather"
+            @click="fetchWeather"
+          >
             {{ isFetchingWeather ? '...' : 'دریافت پیش‌بینی' }}
           </button>
         </div>
@@ -122,7 +118,6 @@ function submit() {
             <div class="text-slate-400">{{ day.rainChance }}٪ باران</div>
           </div>
         </div>
-        <p v-else-if="form.weatherCity && !isFetchingWeather" class="text-xs text-slate-400 mt-2">برای دریافت پیش‌بینی روی دکمه بزن</p>
       </div>
 
       <TagMultiSelect v-model="form.vehicleIds" :items="catalog.vehicles" label="وسایل نقلیه" @add-custom="(name) => addCustomCatalog('vehicles', name)" />
