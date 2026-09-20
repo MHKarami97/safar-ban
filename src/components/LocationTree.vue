@@ -62,7 +62,7 @@ var visitGroups = computed(() => {
       </div>
 
       <div v-if="addingLocationForCity === city.id" class="flex flex-col sm:flex-row gap-2 mb-3">
-        <input v-model="newLocationName" type="text" placeholder="نام لوکیشن (متلا آرامگاه حافظ)" class="flex-1 min-h-[40px] rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 px-3 text-sm" />
+        <input v-model="newLocationName" type="text" placeholder="نام لوکیشن (مثلا آرامگاه حافظ)" class="flex-1 min-h-[40px] rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 px-3 text-sm" />
         <input v-model="newLocationDesc" type="text" placeholder="توضیح کوتاه (اختیاری)" class="flex-1 min-h-[40px] rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 px-3 text-sm" />
         <button type="button" class="min-h-[40px] px-4 rounded-lg bg-brand-500 text-white text-sm" @click="submitLocation(city.id)">افزودن</button>
       </div>

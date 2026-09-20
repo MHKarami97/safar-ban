@@ -1,14 +1,6 @@
 <script setup>
 import { useRegisterSW } from 'virtual:pwa-register/vue'
 
-/**
- * registerType: 'prompt' means a new service worker installs but stays in
- * the "waiting" state until the user confirms — `needRefresh` flips to true
- * only once a *different* sw.js has actually been fetched and installed.
- * Checking on an interval alone misses the common case of a user closing the
- * tab and reopening the installed PWA later, so we also force a check the
- * moment the app becomes visible again.
- */
 const { needRefresh, updateServiceWorker } = useRegisterSW({
   onRegisteredSW(swUrl, registration) {
     if (!registration) return
