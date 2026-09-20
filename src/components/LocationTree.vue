@@ -18,7 +18,7 @@ function addCity() {
   newCityName.value = ''
 }
 
-function openLocationForm(cityId) {
+function toggleLocationForm(cityId) {
   addingLocationForCity.value = addingLocationForCity.value === cityId ? null : cityId
   newLocationName.value = ''
   newLocationDesc.value = ''
@@ -62,13 +62,22 @@ var visitGroups = computed(() => {
     <div v-for="city in region.cities" :key="city.id" class="rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-4">
       <div class="flex items-center justify-between mb-3">
         <h3 class="font-semibold text-sm sm:text-base">🏙️ {{ city.name }}</h3>
-        <button type="button" class="text-xs text-brand-600 dark:text-brand-300" @click="openLocationForm(city.id)">+ افزودن لوکیشن</button>
+        <button
+          type="button"
+          class="text-xs px-3 py-1.5 rounded-full font-medium transition-colors"
+          :class="addingLocationForCity === city.id
+            ? 'bg-slate-200 dark:bg-slate-700 text-slate-600 dark:text-slate-200'
+            : 'bg-brand-50 dark:bg-brand-700/30 text-brand-700 dark:text-brand-100 hover:bg-brand-100 dark:hover:bg-brand-700/50'"
+          @click="toggleLocationForm(city.id)"
+        >
+          {{ addingLocationForCity === city.id ? 'بستن' : '+ افزودن لوکیشن' }}
+        </button>
       </div>
 
       <div v-if="addingLocationForCity === city.id" class="flex flex-col sm:flex-row gap-2 mb-3">
         <input v-model="newLocationName" type="text" placeholder="نام لوکیشن (متلا آرامگاه حافظ)" class="flex-1 min-h-[40px] rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 px-3 text-sm" />
         <input v-model="newLocationDesc" type="text" placeholder="توضیح کوتاه (اختیاری)" class="flex-1 min-h-[40px] rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 px-3 text-sm" />
-        <button type="button" class="min-h-[40px] px-4 rounded-lg bg-brand-500 text-white text-sm" @click="submitLocation(city.id)">افزودن</button>
+        <button type="button" class="min-h-[40px] px-4 rounded-lg bg-brand-500 text-white text-sm font-medium flex-shrink-0" @click="submitLocation(city.id)">افزودن</button>
       </div>
 
       <div class="space-y-2">
@@ -109,7 +118,7 @@ var visitGroups = computed(() => {
 
     <div class="flex items-center gap-2">
       <input v-model="newCityName" type="text" placeholder="افزودن شهر جدید..." class="flex-1 min-h-[44px] rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 px-4 text-sm" @keyup.enter="addCity" />
-      <button type="button" class="min-h-[44px] px-4 rounded-xl bg-slate-200 dark:bg-slate-700 text-sm" @click="addCity">افزودن شهر</button>
+      <button type="button" class="min-h-[44px] px-4 rounded-xl bg-slate-800 dark:bg-slate-100 text-white dark:text-slate-900 text-sm font-medium flex-shrink-0" @click="addCity">افزودن شهر</button>
     </div>
 
     <button
