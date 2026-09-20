@@ -18,6 +18,11 @@ var accommodationForm = reactive({ name: '', address: '', phone: '' })
 var isEditingAccommodation = ref(false)
 var justSavedAccommodation = ref(false)
 
+/** Gentle reminder shown when a day already has destinations but no accommodation set yet. */
+var showNoAccommodationWarning = computed(() => {
+  return trip.value?.destinationsForDay(activeDay.value).length > 0 && !trip.value?.accommodationForDay(activeDay.value)
+})
+
 function switchDay(day) {
   activeDay.value = day
   overlapWarning.value = false
@@ -87,8 +92,8 @@ function finish() {
         v-for="day in trip.durationDays"
         :key="day"
         type="button"
-        class="min-h-[40px] px-4 rounded-full text-sm whitespace-nowrap flex-shrink-0"
-        :class="activeDay === day ? 'bg-brand-500 text-white' : 'bg-slate-100 dark:bg-slate-800'"
+        class="min-h-[40px] px-4 rounded-full text-sm whitespace-nowrap flex-shrink-0 font-medium transition-colors"
+        :class="activeDay === day ? 'bg-brand-500 text-white' : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300'"
         @click="switchDay(day)"
       >
         روز {{ day }}
@@ -96,7 +101,7 @@ function finish() {
     </div>
 
     <div class="rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-4 space-y-3">
-      <h2 class="text-sm font-semibold">مقصدهای روز {{ activeDay }}</h2>
+      <h2 class="text-sm font-semibold">📍 مقصدهای روز {{ activeDay }}</h2>
 
       <div v-if="overlapWarning" class="text-xs bg-amber-50 dark:bg-amber-900/30 text-amber-700 dark:text-amber-200 rounded-xl p-3">
         ⚠️ زمان این مقصد با مقصد دیگری در همین روز همپوشانی دارد. بهتر است کمی زمان شناور بین مقصدها در نظر بگیری تا اگر طول کشید، برنامه‌ات به‌هم نریزد.
@@ -105,25 +110,50 @@ function finish() {
       <DestinationCard v-for="d in trip.destinationsForDay(activeDay)" :key="d.id" :destination="d" @remove="removeDestination" />
       <p v-if="!trip.destinationsForDay(activeDay).length" class="text-xs text-slate-400">هنوز مقصدی برای این روز ثبت نشده</p>
 
-      <div class="grid grid-cols-1 sm:grid-cols-4 gap-2 pt-2">
-        <input v-model="destinationForm.name" type="text" placeholder="نام مقصد" class="sm:col-span-2 min-h-[40px] rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 px-3 text-sm" />
-        <input v-model="destinationForm.startTime" type="time" class="min-h-[40px] rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 px-3 text-sm" />
-        <input v-model.number="destinationForm.durationHours" type="number" min="0.5" step="0.5" placeholder="مدت (ساعت)" class="min-h-[40px] rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 px-3 text-sm" />
+      <div class="grid grid-cols-1 sm:grid-cols-4 gap-3 pt-2">
+        <div class="sm:col-span-2">
+          <label class="text-xs text-slate-400 block mb-1">نام مقصد</label>
+          <input v-model="destinationForm.name" type="text" placeholder="متلا آرامگاه حافظ" class="w-full min-h-[40px] rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 px-3 text-sm" />
+        </div>
+        <div>
+          <label class="text-xs text-slate-400 block mb-1">ساعت شروع</label>
+          <input v-model="destinationForm.startTime" type="time" class="w-full min-h-[40px] rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 px-3 text-sm" />
+        </div>
+        <div>
+          <label class="text-xs text-slate-400 block mb-1">مدت زمان (ساعت)</label>
+          <input v-model.number="destinationForm.durationHours" type="number" min="0.5" step="0.5" class="w-full min-h-[40px] rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 px-3 text-sm" />
+        </div>
       </div>
-      <input v-model="destinationForm.note" type="text" placeholder="توضیح کوتاه (اختیاری)" class="w-full min-h-[40px] rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 px-3 text-sm" />
+      <div>
+        <label class="text-xs text-slate-400 block mb-1">توضیح کوتاه (اختیاری)</label>
+        <input v-model="destinationForm.note" type="text" placeholder="متلا بلیط از قبل بگیر" class="w-full min-h-[40px] rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 px-3 text-sm" />
+      </div>
       <button type="button" class="w-full min-h-[40px] rounded-lg bg-brand-500 text-white text-sm font-medium" @click="addDestination">+ افزودن مقصد</button>
     </div>
 
     <div class="rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-4 space-y-3">
       <div class="flex items-center justify-between">
         <h2 class="text-sm font-semibold">🏨 اقامتگاه روز {{ activeDay }}</h2>
-        <span v-if="justSavedAccommodation" class="text-xs text-brand-600">ذخیره شد ✓</span>
+        <span v-if="justSavedAccommodation" class="text-xs text-brand-600 font-medium">ذخیره شد ✓</span>
+      </div>
+
+      <div v-if="showNoAccommodationWarning && !isEditingAccommodation" class="text-xs bg-amber-50 dark:bg-amber-900/30 text-amber-700 dark:text-amber-200 rounded-xl p-3">
+        ⚠️ برای این روز مقصد ثبت کرده‌ای ولی هنوز اقامتگاهی مشخص نکرده‌ای. فراموش نکن قبل از سفر آن را ثبت کنی.
       </div>
 
       <template v-if="isEditingAccommodation">
-        <input v-model="accommodationForm.name" type="text" placeholder="نام اقامتگاه" class="w-full min-h-[40px] rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 px-3 text-sm" />
-        <input v-model="accommodationForm.address" type="text" placeholder="آدرس" class="w-full min-h-[40px] rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 px-3 text-sm" />
-        <input v-model="accommodationForm.phone" type="text" placeholder="شماره تماس" class="w-full min-h-[40px] rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 px-3 text-sm" />
+        <div>
+          <label class="text-xs text-slate-400 block mb-1">نام اقامتگاه</label>
+          <input v-model="accommodationForm.name" type="text" placeholder="متلا هتل پارس" class="w-full min-h-[40px] rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 px-3 text-sm" />
+        </div>
+        <div>
+          <label class="text-xs text-slate-400 block mb-1">آدرس</label>
+          <input v-model="accommodationForm.address" type="text" placeholder="آدرس کامل" class="w-full min-h-[40px] rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 px-3 text-sm" />
+        </div>
+        <div>
+          <label class="text-xs text-slate-400 block mb-1">شماره تماس</label>
+          <input v-model="accommodationForm.phone" type="text" placeholder="متلا ۰۹۱۲xxxxxxx" class="w-full min-h-[40px] rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 px-3 text-sm" />
+        </div>
         <button type="button" class="w-full min-h-[40px] rounded-lg bg-brand-500 text-white text-sm font-medium" @click="saveAccommodation">ذخیره اقامتگاه</button>
       </template>
       <template v-else>
@@ -133,7 +163,7 @@ function finish() {
             <p class="text-xs text-slate-400 mt-0.5">{{ accommodationForm.address }}</p>
             <p class="text-xs text-slate-400">{{ accommodationForm.phone }}</p>
           </div>
-          <button type="button" class="text-xs text-brand-600 flex-shrink-0" @click="editAccommodation">ویرایش</button>
+          <button type="button" class="text-xs px-3 py-1.5 rounded-full bg-brand-50 dark:bg-brand-700/30 text-brand-700 dark:text-brand-100 font-medium flex-shrink-0" @click="editAccommodation">ویرایش</button>
         </div>
       </template>
     </div>
