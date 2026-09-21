@@ -104,15 +104,26 @@ export class TripPrintService {
       </div>`
   }
 
+  static _eventsSection(trip) {
+    var visibleStatuses = ['ongoing', 'completed']
+    if (!visibleStatuses.includes(trip.status)) return ''
+
+    var eventsHtml = trip.events.length
+      ? trip.events.map((e) => this._eventCard(trip, e)).join('')
+      : '<p class="empty">رویدادی ثبت نشده</p>'
+
+    return `
+      <section class="block">
+        <h2>گزارش رویدادها</h2>
+        ${eventsHtml}
+      </section>`
+  }
+
   static _buildHtml(trip, catalog) {
     var dayBlocks = []
     for (var day = 1; day <= trip.durationDays; day += 1) {
       dayBlocks.push(this._dayCard(trip, day))
     }
-
-    var eventsHtml = trip.events.length
-      ? trip.events.map((e) => this._eventCard(trip, e)).join('')
-      : '<p class="empty">رویدادی ثبت نشده</p>'
 
     return `
       <!DOCTYPE html>
@@ -135,9 +146,9 @@ export class TripPrintService {
             font-family: 'Vazirmatn', system-ui, sans-serif;
             color: var(--ink);
             direction: rtl;
-            padding: 30px 34px;
-            font-size: 13px;
-            line-height: 1.55;
+            padding: 20px 26px;
+            font-size: 12px;
+            line-height: 1.35;
           }
           .print-table { width: 100%; border-collapse: collapse; }
 
@@ -145,161 +156,162 @@ export class TripPrintService {
             display: flex;
             justify-content: space-between;
             align-items: flex-start;
-            border-bottom: 3px solid var(--brand);
-            padding-bottom: 14px;
-            margin-bottom: 18px;
+            border-bottom: 2px solid var(--brand);
+            padding-bottom: 8px;
+            margin-bottom: 10px;
           }
-          .header h1 { color: var(--brand); margin: 0 0 4px; font-size: 22px; }
-          .header .subtitle { color: var(--muted); margin: 0; font-size: 12.5px; }
+          .header h1 { color: var(--brand); margin: 0 0 2px; font-size: 18px; }
+          .header .subtitle { color: var(--muted); margin: 0; font-size: 11px; }
           .status-pill {
             background: var(--brand-light);
             color: var(--brand);
             border: 1px solid var(--brand);
             border-radius: 999px;
-            padding: 5px 14px;
-            font-size: 11.5px;
+            padding: 3px 12px;
+            font-size: 10.5px;
             font-weight: 600;
             white-space: nowrap;
           }
 
           .meta-grid {
             display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 10px 20px;
-            margin-bottom: 20px;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 6px 10px;
+            margin-bottom: 10px;
           }
           .meta-item {
             border: 1px solid var(--line);
-            border-radius: 10px;
-            padding: 8px 12px;
+            border-radius: 8px;
+            padding: 5px 8px;
             background: #f8fafc;
           }
-          .meta-item .label { display: block; color: var(--faint); font-size: 10.5px; margin-bottom: 2px; }
-          .meta-item .value { font-weight: 600; }
+          .meta-item .label { display: block; color: var(--faint); font-size: 9px; margin-bottom: 1px; }
+          .meta-item .value { font-weight: 600; font-size: 11px; }
 
           h2 {
             color: var(--brand);
-            font-size: 14px;
-            border-bottom: 2px solid var(--brand);
-            padding-bottom: 5px;
-            margin: 22px 0 12px;
+            font-size: 12.5px;
+            border-bottom: 1.5px solid var(--brand);
+            padding-bottom: 3px;
+            margin: 12px 0 6px;
           }
-          .block { margin-bottom: 4px; }
+          .block { margin-bottom: 2px; }
 
           .catalog-grid {
             display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 12px;
-            margin-bottom: 6px;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 6px;
+            margin-bottom: 2px;
           }
           .catalog-card {
             border: 1px solid var(--line);
-            border-radius: 10px;
-            padding: 10px 12px;
+            border-radius: 8px;
+            padding: 6px 8px;
           }
-          .catalog-card .cat-title { font-size: 11px; color: var(--muted); font-weight: 600; margin-bottom: 6px; }
-          .chip-list { display: flex; flex-wrap: wrap; gap: 6px; }
+          .catalog-card .cat-title { font-size: 9.5px; color: var(--muted); font-weight: 600; margin-bottom: 3px; }
+          .chip-list { display: flex; flex-wrap: wrap; gap: 4px; }
           .chip {
             display: inline-block;
             border: 1px solid var(--brand-mid);
             color: var(--brand-mid);
             background: var(--brand-light);
             border-radius: 999px;
-            padding: 3px 10px;
-            font-size: 11px;
+            padding: 1px 8px;
+            font-size: 9.5px;
           }
-          .empty { color: var(--faint); font-size: 11.5px; }
+          .empty { color: var(--faint); font-size: 10px; }
 
-          .weather-row { display: flex; gap: 8px; flex-wrap: wrap; }
+          .weather-row { display: flex; gap: 5px; flex-wrap: wrap; }
           .weather-card {
             border: 1px solid var(--line);
-            border-radius: 10px;
-            padding: 8px 10px;
+            border-radius: 8px;
+            padding: 4px 8px;
             text-align: center;
-            min-width: 64px;
+            min-width: 54px;
             background: #f8fafc;
           }
-          .weather-date { font-size: 10.5px; color: var(--muted); margin-bottom: 3px; }
-          .weather-temp { font-size: 12.5px; }
-          .weather-rain { font-size: 10px; color: var(--faint); margin-top: 2px; }
+          .weather-date { font-size: 9px; color: var(--muted); margin-bottom: 1px; }
+          .weather-temp { font-size: 10.5px; }
+          .weather-rain { font-size: 8.5px; color: var(--faint); margin-top: 1px; }
 
           .day-card {
             border: 1px solid var(--line);
-            border-radius: 12px;
-            padding: 12px 14px;
-            margin-bottom: 12px;
+            border-radius: 9px;
+            padding: 7px 10px;
+            margin-bottom: 6px;
             page-break-inside: avoid;
           }
-          .day-header { margin-bottom: 8px; }
+          .day-header { margin-bottom: 4px; }
           .day-badge {
             display: inline-block;
             background: var(--brand);
             color: #fff;
-            font-size: 11px;
+            font-size: 9.5px;
             font-weight: 600;
             border-radius: 999px;
-            padding: 3px 12px;
+            padding: 2px 10px;
           }
           .timeline { list-style: none; margin: 0; padding: 0; }
           .timeline-item {
             display: flex;
-            gap: 12px;
-            padding: 6px 0;
+            gap: 8px;
+            padding: 3px 0;
             border-bottom: 1px dashed var(--line);
           }
           .timeline-item:last-child { border-bottom: none; }
-          .timeline-item.empty-item { color: var(--faint); font-size: 11.5px; border-bottom: none; }
+          .timeline-item.empty-item { color: var(--faint); font-size: 10px; border-bottom: none; padding: 2px 0; }
           .timeline-time {
             flex-shrink: 0;
-            min-width: 78px;
-            font-size: 11px;
+            min-width: 70px;
+            font-size: 9.5px;
             font-weight: 700;
             color: var(--brand-mid);
             direction: ltr;
             text-align: center;
           }
-          .timeline-sep { margin: 0 3px; color: var(--faint); }
-          .timeline-name { margin: 0; font-weight: 600; font-size: 12.5px; }
-          .timeline-note { margin: 2px 0 0; font-size: 11px; color: var(--faint); }
+          .timeline-sep { margin: 0 2px; color: var(--faint); }
+          .timeline-name { margin: 0; font-weight: 600; font-size: 10.5px; }
+          .timeline-note { margin: 1px 0 0; font-size: 9.5px; color: var(--faint); }
           .stay-box {
-            margin-top: 10px;
+            margin-top: 5px;
             background: var(--brand-light);
-            border-radius: 10px;
-            padding: 8px 12px;
+            border-radius: 8px;
+            padding: 4px 10px;
           }
-          .stay-label { font-size: 10px; color: var(--brand-mid); font-weight: 700; }
-          .stay-name { margin: 2px 0 0; font-weight: 600; font-size: 12px; }
-          .stay-meta { margin: 2px 0 0; font-size: 10.5px; color: var(--muted); }
+          .stay-label { font-size: 8.5px; color: var(--brand-mid); font-weight: 700; }
+          .stay-name { margin: 1px 0 0; font-weight: 600; font-size: 10px; }
+          .stay-meta { margin: 1px 0 0; font-size: 9px; color: var(--muted); }
 
           .event-card {
             border: 1px solid var(--line);
-            border-radius: 10px;
-            padding: 10px 12px;
-            margin-bottom: 8px;
+            border-radius: 8px;
+            padding: 6px 10px;
+            margin-bottom: 5px;
             page-break-inside: avoid;
           }
-          .event-head { display: flex; justify-content: space-between; margin-bottom: 4px; }
-          .event-date { font-weight: 700; font-size: 12px; }
-          .event-cost { font-weight: 700; font-size: 12px; color: var(--brand-mid); }
-          .event-line { margin: 2px 0; font-size: 11.5px; }
+          .event-head { display: flex; justify-content: space-between; margin-bottom: 2px; }
+          .event-date { font-weight: 700; font-size: 10.5px; }
+          .event-cost { font-weight: 700; font-size: 10.5px; color: var(--brand-mid); }
+          .event-line { margin: 1px 0; font-size: 9.5px; }
           .event-line.ok { color: var(--brand-mid); }
           .event-line.bad { color: #b91c1c; }
           .event-line.muted { color: var(--muted); }
 
-          .cultural-list { margin: 0; padding-right: 18px; font-size: 12px; }
+          .cultural-list { margin: 0; padding-right: 16px; font-size: 10.5px; }
+          .cultural-list li { margin-bottom: 1px; }
 
           .print-footer {
             text-align: left;
             direction: ltr;
-            font-size: 10.5px;
+            font-size: 9px;
             color: var(--faint);
-            padding-top: 10px;
+            padding-top: 5px;
             border-top: 1px solid var(--line);
-            margin-top: 6px;
+            margin-top: 4px;
           }
 
           @media print {
-            body { padding: 14px 18px; }
+            body { padding: 12px 16px; }
             .day-card, .event-card, .catalog-card { break-inside: avoid; }
           }
         </style>
@@ -350,10 +362,7 @@ export class TripPrintService {
                   ${dayBlocks.join('')}
                 </section>
 
-                <section class="block">
-                  <h2>گزارش رویدادها</h2>
-                  ${eventsHtml}
-                </section>
+                ${this._eventsSection(trip)}
               </td>
             </tr>
           </tbody>
