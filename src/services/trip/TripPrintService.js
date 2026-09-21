@@ -61,7 +61,8 @@ export class TripPrintService {
           .muted { color: #94a3b8; font-size: 0.9em; }
           .stay { background: #eefbf3; padding: 8px; border-radius: 8px; }
           .event { border: 1px solid #e2e8f0; border-radius: 8px; padding: 10px; margin-bottom: 8px; }
-          @media print { body { padding: 0; } }
+          .print-footer { position: fixed; bottom: 8px; left: 12px; direction: ltr; font-size: 0.75em; color: #94a3b8; }
+          @media print { body { padding: 0; } .print-footer { position: fixed; bottom: 6px; left: 10px; } }
         </style>
       </head>
       <body>
@@ -86,6 +87,8 @@ export class TripPrintService {
 
         <h2>گزارش رویدادها</h2>
         ${eventsHtml}
+
+        <div class="print-footer">safar.mhkarami97.ir</div>
       </body>
       </html>
     `
