@@ -49,7 +49,22 @@ export class TripPrintService {
         <meta charset="UTF-8" />
         <title>${trip.title} | سفربان</title>
         <style>
-          body { font-family: 'Vazirmatn', system-ui, sans-serif; color: #1e293b; padding: 32px; direction: rtl; }
+          html, body {
+            height: 100%;
+            margin: 0;
+          }
+          body {
+            font-family: 'Vazirmatn', system-ui, sans-serif;
+            color: #1e293b;
+            direction: rtl;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            padding: 32px;
+          }
+          .print-content {
+            flex: 1 0 auto;
+          }
           h1 { color: #0e5f38; margin-bottom: 4px; }
           .subtitle { color: #64748b; margin-bottom: 24px; }
           .meta-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px 24px; margin-bottom: 24px; }
@@ -61,32 +76,43 @@ export class TripPrintService {
           .muted { color: #94a3b8; font-size: 0.9em; }
           .stay { background: #eefbf3; padding: 8px; border-radius: 8px; }
           .event { border: 1px solid #e2e8f0; border-radius: 8px; padding: 10px; margin-bottom: 8px; }
-          .print-footer { position: fixed; bottom: 8px; left: 12px; direction: ltr; font-size: 0.75em; color: #94a3b8; }
-          @media print { body { padding: 0; } .print-footer { position: fixed; bottom: 6px; left: 10px; } }
+          .print-footer {
+            margin-top: auto;
+            padding-top: 12px;
+            text-align: left;
+            direction: ltr;
+            font-size: 0.75em;
+            color: #94a3b8;
+          }
+          @media print {
+            body { padding: 16px; }
+          }
         </style>
       </head>
       <body>
-        <h1>${trip.title}</h1>
-        <p class="subtitle">${trip.description || ''}</p>
-        <div class="meta-grid">
-          <div>تاریخ شروع: ${jalaliDateToLabel(trip.startDateJalali)}</div>
-          <div>تاریخ پایان: ${jalaliDateToLabel(trip.endDateJalali)}</div>
-          <div>تعداد روز: ${trip.durationDays}</div>
-          <div>هزینه در نظر گرفته‌شده: ${Number(trip.budget).toLocaleString('fa-IR')} تومان</div>
-          <div>وضعیت: ${TRIP_STATUSES[trip.status]}</div>
-          <div>وسایل نقلیه: ${this._names(trip.vehicleIds, catalog.vehicles)}</div>
-          <div>همسفران: ${this._names(trip.companionIds, catalog.companions)}</div>
-          <div>مدارک لازم: ${this._names(trip.documentIds, catalog.documents)}</div>
-          <div>تجهیزات: ${this._names(trip.equipmentIds, catalog.equipment)}</div>
+        <div class="print-content">
+          <h1>${trip.title}</h1>
+          <p class="subtitle">${trip.description || ''}</p>
+          <div class="meta-grid">
+            <div>تاریخ شروع: ${jalaliDateToLabel(trip.startDateJalali)}</div>
+            <div>تاریخ پایان: ${jalaliDateToLabel(trip.endDateJalali)}</div>
+            <div>تعداد روز: ${trip.durationDays}</div>
+            <div>هزینه در نظر گرفته‌شده: ${Number(trip.budget).toLocaleString('fa-IR')} تومان</div>
+            <div>وضعیت: ${TRIP_STATUSES[trip.status]}</div>
+            <div>وسایل نقلیه: ${this._names(trip.vehicleIds, catalog.vehicles)}</div>
+            <div>همسفران: ${this._names(trip.companionIds, catalog.companions)}</div>
+            <div>مدارک لازم: ${this._names(trip.documentIds, catalog.documents)}</div>
+            <div>تجهیزات: ${this._names(trip.equipmentIds, catalog.equipment)}</div>
+          </div>
+
+          ${trip.culturalNotes.length ? `<h2>نکات فرهنگی</h2><ul>${trip.culturalNotes.map((n) => `<li>${n}</li>`).join('')}</ul>` : ''}
+
+          <h2>برنامه روزانه و اقامتگاه</h2>
+          ${dayBlocks.join('')}
+
+          <h2>گزارش رویدادها</h2>
+          ${eventsHtml}
         </div>
-
-        ${trip.culturalNotes.length ? `<h2>نکات فرهنگی</h2><ul>${trip.culturalNotes.map((n) => `<li>${n}</li>`).join('')}</ul>` : ''}
-
-        <h2>برنامه روزانه و اقامتگاه</h2>
-        ${dayBlocks.join('')}
-
-        <h2>گزارش رویدادها</h2>
-        ${eventsHtml}
 
         <div class="print-footer">safar.mhkarami97.ir</div>
       </body>
