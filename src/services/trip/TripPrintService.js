@@ -1,7 +1,6 @@
 import { TRIP_STATUSES } from '../../models/trip/TripPlan'
 import { jalaliDateToLabel } from '../../utils/jalali'
 
-/** Builds a clean, print-friendly HTML document for a trip and opens the browser print dialog. */
 export class TripPrintService {
   static print(trip, catalogLookup) {
     var win = window.open('', '_blank')
