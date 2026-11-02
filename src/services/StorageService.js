@@ -22,6 +22,7 @@ export class StorageService {
   set(key, value) {
     try {
       localStorage.setItem(this._key(key), JSON.stringify(value))
+      this._notify(key)
       return true
     } catch (error) {
       console.error('StorageService.set failed', error)
@@ -29,11 +30,38 @@ export class StorageService {
     }
   }
 
-  remove(key) { localStorage.removeItem(this._key(key)) }
+  remove(key) {
+    localStorage.removeItem(this._key(key))
+    this._notify(key)
+  }
 
   allKeys() { return Object.keys(localStorage).filter((k) => k.startsWith(`${this.namespace}:`)) }
 
   clearAll() { this.allKeys().forEach((k) => localStorage.removeItem(k)) }
+
+  notifyChange(key) {
+    this._notify(key)
+  }
+
+  onChange(listener) {
+    if (!this._listeners) this._listeners = []
+    this._listeners.push(listener)
+    return () => {
+      this._listeners = this._listeners.filter((l) => l !== listener)
+    }
+  }
+
+  _notify(key) {
+    if (key && String(key).startsWith('cloudSync:')) return
+    if (!this._listeners) return
+    this._listeners.forEach((l) => {
+      try {
+        l(key)
+      } catch (err) {
+        console.error('StorageService listener error', err)
+      }
+    })
+  }
 }
 
 export const storageService = new StorageService()

@@ -1,9 +1,13 @@
 <script setup>
 import { ref } from 'vue'
 import { BackupService } from '../services/BackupService'
+import { useCloudSyncStore } from '../stores/cloudSyncStore'
+import CloudBackupCard from '../components/cloud/CloudBackupCard.vue'
 
+var cloudStore = useCloudSyncStore()
 var importInput = ref(null)
 var isImporting = ref(false)
+var showCloudBackup = ref(false)
 
 function triggerImport() { importInput.value.click() }
 
@@ -45,11 +49,11 @@ async function handleImport(event) {
       </RouterLink>
     </div>
 
-    <div class="flex items-center justify-between gap-3 rounded-xl border border-slate-200/70 dark:border-slate-700/70 bg-slate-50/60 dark:bg-slate-800/40 px-3 py-2.5">
+    <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 rounded-xl border border-slate-200/70 dark:border-slate-700/70 bg-slate-50/60 dark:bg-slate-800/40 px-3 py-2.5">
       <p class="text-[11px] text-slate-400 leading-5">
         پشتیبان‌گیری کامل از تمام داده‌های اپ (لوکیشن‌ها، سفرها، رویدادها)
       </p>
-      <div class="flex items-center gap-1.5 flex-shrink-0">
+      <div class="flex items-center gap-1.5 flex-shrink-0 flex-wrap">
         <button type="button" class="text-[11px] px-2.5 py-1.5 rounded-lg bg-slate-200 dark:bg-slate-700 text-slate-600 dark:text-slate-300 font-medium" @click="BackupService.exportAll">
           خروجی
         </button>
@@ -57,7 +61,26 @@ async function handleImport(event) {
           {{ isImporting ? '...' : 'ورودی' }}
         </button>
         <input ref="importInput" type="file" accept="application/json" class="hidden" @change="handleImport" />
+        <button
+          type="button"
+          class="text-[11px] px-2.5 py-1.5 rounded-lg border font-medium transition-colors flex items-center gap-1"
+          :class="showCloudBackup ? 'bg-brand-50 dark:bg-brand-950/40 border-brand-500 text-brand-600 dark:text-brand-400' : 'border-slate-300 dark:border-slate-600 bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-300'"
+          @click="showCloudBackup = !showCloudBackup"
+          title="پشتیبان‌گیری ابری Google Drive"
+        >
+          <span>☁️</span>
+          <span>Google Drive</span>
+          <span
+            v-if="cloudStore.isConnected"
+            class="inline-block w-1.5 h-1.5 rounded-full bg-emerald-500"
+            title="متصل"
+          />
+        </button>
       </div>
+    </div>
+
+    <div v-show="showCloudBackup" class="transition-all">
+      <CloudBackupCard />
     </div>
   </section>
 </template>
