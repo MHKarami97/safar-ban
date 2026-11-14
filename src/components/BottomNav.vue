@@ -7,7 +7,8 @@ var router = useRouter()
 var tabs = [
   { name: 'home', label: 'خانه', icon: '🏠', to: '/' },
   { name: 'regions-home', label: 'لوکیشن‌ها', icon: '📍', to: '/regions' },
-  { name: 'trip-list', label: 'سفرها', icon: '🧳', to: '/trips' }
+  { name: 'trip-list', label: 'سفرها', icon: '🧳', to: '/trips' },
+  { name: 'reports', label: 'گزارشات', icon: '📊', to: '/reports' }
 ]
 </script>
 

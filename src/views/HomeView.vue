@@ -1,28 +1,30 @@
 <script setup>
-import { ref } from 'vue'
-import { BackupService } from '../services/BackupService'
-import { useCloudSyncStore } from '../stores/cloudSyncStore'
-import CloudBackupCard from '../components/cloud/CloudBackupCard.vue'
+import { ref } from "vue";
+import { BackupService } from "../services/BackupService";
+import { useCloudSyncStore } from "../stores/cloudSyncStore";
+import CloudBackupCard from "../components/cloud/CloudBackupCard.vue";
 
-var cloudStore = useCloudSyncStore()
-var importInput = ref(null)
-var isImporting = ref(false)
-var showCloudBackup = ref(false)
+var cloudStore = useCloudSyncStore();
+var importInput = ref(null);
+var isImporting = ref(false);
+var showCloudBackup = ref(false);
 
-function triggerImport() { importInput.value.click() }
+function triggerImport() {
+  importInput.value.click();
+}
 
 async function handleImport(event) {
-  var file = event.target.files?.[0]
-  if (!file) return
-  isImporting.value = true
+  var file = event.target.files?.[0];
+  if (!file) return;
+  isImporting.value = true;
   try {
-    await BackupService.importAll(file)
-    window.location.reload()
+    await BackupService.importAll(file);
+    window.location.reload();
   } catch (error) {
-    alert('وارد کردن فایل بکام با خطا مواجه شد: ' + error.message)
+    alert("وارد کردن فایل بکام با خطا مواجه شد: " + error.message);
   } finally {
-    isImporting.value = false
-    event.target.value = ''
+    isImporting.value = false;
+    event.target.value = "";
   }
 }
 </script>
@@ -32,39 +34,81 @@ async function handleImport(event) {
     <div class="text-center py-6">
       <div class="text-5xl mb-3">🧭</div>
       <h1 class="text-2xl font-bold">سفربان</h1>
-      <p class="text-sm text-slate-400 mt-1">لوکیشن‌های سفرت را ثبت کن، برنامه سفرت را بچین</p>
+      <p class="text-sm text-slate-400 mt-1">
+        لوکیشن‌های سفرت را ثبت کن، برنامه سفرت را بچین
+      </p>
     </div>
 
     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-      <RouterLink to="/regions" class="rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-6 hover:shadow-md hover:-translate-y-0.5 transition-all">
+      <RouterLink
+        to="/regions"
+        class="rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-6 hover:shadow-md hover:-translate-y-0.5 transition-all"
+      >
         <div class="text-3xl mb-2">📍</div>
         <h2 class="font-semibold mb-1">لوکیشن‌های سفر</h2>
-        <p class="text-xs text-slate-400">استان‌ها و کشورها، شهر به شهر و لوکیشن به لوکیشن</p>
+        <p class="text-xs text-slate-400">
+          استان‌ها و کشورها، شهر به شهر و لوکیشن به لوکیشن
+        </p>
       </RouterLink>
 
-      <RouterLink to="/trips" class="rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-6 hover:shadow-md hover:-translate-y-0.5 transition-all">
+      <RouterLink
+        to="/trips"
+        class="rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-6 hover:shadow-md hover:-translate-y-0.5 transition-all"
+      >
         <div class="text-3xl mb-2">🧳</div>
         <h2 class="font-semibold mb-1">برنامه‌ریزی سفر</h2>
-        <p class="text-xs text-slate-400">ساخت برنامه سفر با تاریخ شمسی، مقاصد روزانه و گزارش سفر</p>
+        <p class="text-xs text-slate-400">
+          ساخت برنامه سفر با تاریخ شمسی، مقاصد روزانه و گزارش سفر
+        </p>
+      </RouterLink>
+
+      <RouterLink
+        to="/reports"
+        class="rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-6 hover:shadow-md hover:-translate-y-0.5 transition-all"
+      >
+        <div class="text-3xl mb-2">📊</div>
+        <h2 class="font-semibold mb-1">گزارشات</h2>
+        <p class="text-xs text-slate-400">آمار و تحلیل سفرها</p>
       </RouterLink>
     </div>
 
-    <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 rounded-xl border border-slate-200/70 dark:border-slate-700/70 bg-slate-50/60 dark:bg-slate-800/40 px-3 py-2.5">
+    <div
+      class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 rounded-xl border border-slate-200/70 dark:border-slate-700/70 bg-slate-50/60 dark:bg-slate-800/40 px-3 py-2.5"
+    >
       <p class="text-[11px] text-slate-400 leading-5">
         پشتیبان‌گیری کامل از تمام داده‌های اپ (لوکیشن‌ها، سفرها، رویدادها)
       </p>
       <div class="flex items-center gap-1.5 flex-shrink-0 flex-wrap">
-        <button type="button" class="text-[11px] px-2.5 py-1.5 rounded-lg bg-slate-200 dark:bg-slate-700 text-slate-600 dark:text-slate-300 font-medium" @click="BackupService.exportAll">
+        <button
+          type="button"
+          class="text-[11px] px-2.5 py-1.5 rounded-lg bg-slate-200 dark:bg-slate-700 text-slate-600 dark:text-slate-300 font-medium"
+          @click="BackupService.exportAll"
+        >
           خروجی
         </button>
-        <button type="button" class="text-[11px] px-2.5 py-1.5 rounded-lg bg-slate-200 dark:bg-slate-700 text-slate-600 dark:text-slate-300 font-medium" :disabled="isImporting" @click="triggerImport">
-          {{ isImporting ? '...' : 'ورودی' }}
+        <button
+          type="button"
+          class="text-[11px] px-2.5 py-1.5 rounded-lg bg-slate-200 dark:bg-slate-700 text-slate-600 dark:text-slate-300 font-medium"
+          :disabled="isImporting"
+          @click="triggerImport"
+        >
+          {{ isImporting ? "..." : "ورودی" }}
         </button>
-        <input ref="importInput" type="file" accept="application/json" class="hidden" @change="handleImport" />
+        <input
+          ref="importInput"
+          type="file"
+          accept="application/json"
+          class="hidden"
+          @change="handleImport"
+        />
         <button
           type="button"
           class="text-[11px] px-2.5 py-1.5 rounded-lg border font-medium transition-colors flex items-center gap-1"
-          :class="showCloudBackup ? 'bg-brand-50 dark:bg-brand-950/40 border-brand-500 text-brand-600 dark:text-brand-400' : 'border-slate-300 dark:border-slate-600 bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-300'"
+          :class="
+            showCloudBackup
+              ? 'bg-brand-50 dark:bg-brand-950/40 border-brand-500 text-brand-600 dark:text-brand-400'
+              : 'border-slate-300 dark:border-slate-600 bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-300'
+          "
           @click="showCloudBackup = !showCloudBackup"
           title="پشتیبان‌گیری ابری Google Drive"
         >
