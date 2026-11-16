@@ -10,6 +10,7 @@ var TripCreateView = () => import('../views/TripCreateView.vue')
 var TripDestinationsView = () => import('../views/TripDestinationsView.vue')
 var TripDetailView = () => import('../views/TripDetailView.vue')
 var ReportsView = () => import('../views/ReportsView.vue')
+var SettingsView = () => import('../views/SettingsView.vue')
 
 var routes = [
   { path: '/', name: 'home', component: HomeView },
@@ -21,7 +22,8 @@ var routes = [
   { path: '/trips/create', name: 'trip-create', component: TripCreateView },
   { path: '/trips/:id/destinations', name: 'trip-destinations', component: TripDestinationsView, props: true },
   { path: '/trips/:id', name: 'trip-detail', component: TripDetailView, props: true },
-  { path: '/reports', name: 'reports', component: ReportsView }
+  { path: '/reports', name: 'reports', component: ReportsView },
+  { path: '/settings', name: 'settings', component: SettingsView }
 ]
 
 var router = createRouter({

@@ -1,130 +1,40 @@
 <script setup>
-import { ref } from "vue";
-import { BackupService } from "../services/BackupService";
-import { useCloudSyncStore } from "../stores/cloudSyncStore";
-import CloudBackupCard from "../components/cloud/CloudBackupCard.vue";
-
-var cloudStore = useCloudSyncStore();
-var importInput = ref(null);
-var isImporting = ref(false);
-var showCloudBackup = ref(false);
-
-function triggerImport() {
-  importInput.value.click();
-}
-
-async function handleImport(event) {
-  var file = event.target.files?.[0];
-  if (!file) return;
-  isImporting.value = true;
-  try {
-    await BackupService.importAll(file);
-    window.location.reload();
-  } catch (error) {
-    alert("وارد کردن فایل بکام با خطا مواجه شد: " + error.message);
-  } finally {
-    isImporting.value = false;
-    event.target.value = "";
-  }
-}
+import AppIcon from '../components/AppIcon.vue'
+import { HOME_CARDS, TONES } from '../data/appNav'
 </script>
 
 <template>
   <section class="space-y-6">
-    <div class="text-center py-6">
-      <div class="text-5xl mb-3">🧭</div>
-      <h1 class="text-2xl font-bold">سفربان</h1>
-      <p class="text-sm text-slate-400 mt-1">
-        لوکیشن‌های سفرت را ثبت کن، برنامه سفرت را بچین
-      </p>
-    </div>
-
-    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-      <RouterLink
-        to="/regions"
-        class="rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-6 hover:shadow-md hover:-translate-y-0.5 transition-all"
-      >
-        <div class="text-3xl mb-2">📍</div>
-        <h2 class="font-semibold mb-1">لوکیشن‌های سفر</h2>
-        <p class="text-xs text-slate-400">
-          استان‌ها و کشورها، شهر به شهر و لوکیشن به لوکیشن
-        </p>
-      </RouterLink>
-
-      <RouterLink
-        to="/trips"
-        class="rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-6 hover:shadow-md hover:-translate-y-0.5 transition-all"
-      >
-        <div class="text-3xl mb-2">🧳</div>
-        <h2 class="font-semibold mb-1">برنامه‌ریزی سفر</h2>
-        <p class="text-xs text-slate-400">
-          ساخت برنامه سفر با تاریخ شمسی، مقاصد روزانه و گزارش سفر
-        </p>
-      </RouterLink>
-
-      <RouterLink
-        to="/reports"
-        class="rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-6 hover:shadow-md hover:-translate-y-0.5 transition-all"
-      >
-        <div class="text-3xl mb-2">📊</div>
-        <h2 class="font-semibold mb-1">گزارشات</h2>
-        <p class="text-xs text-slate-400">آمار و تحلیل سفرها</p>
-      </RouterLink>
-    </div>
-
-    <div
-      class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 rounded-xl border border-slate-200/70 dark:border-slate-700/70 bg-slate-50/60 dark:bg-slate-800/40 px-3 py-2.5"
-    >
-      <p class="text-[11px] text-slate-400 leading-5">
-        پشتیبان‌گیری کامل از تمام داده‌های اپ (لوکیشن‌ها، سفرها، رویدادها)
-      </p>
-      <div class="flex items-center gap-1.5 flex-shrink-0 flex-wrap">
-        <button
-          type="button"
-          class="text-[11px] px-2.5 py-1.5 rounded-lg bg-slate-200 dark:bg-slate-700 text-slate-600 dark:text-slate-300 font-medium"
-          @click="BackupService.exportAll"
-        >
-          خروجی
-        </button>
-        <button
-          type="button"
-          class="text-[11px] px-2.5 py-1.5 rounded-lg bg-slate-200 dark:bg-slate-700 text-slate-600 dark:text-slate-300 font-medium"
-          :disabled="isImporting"
-          @click="triggerImport"
-        >
-          {{ isImporting ? "..." : "ورودی" }}
-        </button>
-        <input
-          ref="importInput"
-          type="file"
-          accept="application/json"
-          class="hidden"
-          @change="handleImport"
-        />
-        <button
-          type="button"
-          class="text-[11px] px-2.5 py-1.5 rounded-lg border font-medium transition-colors flex items-center gap-1"
-          :class="
-            showCloudBackup
-              ? 'bg-brand-50 dark:bg-brand-950/40 border-brand-500 text-brand-600 dark:text-brand-400'
-              : 'border-slate-300 dark:border-slate-600 bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-300'
-          "
-          @click="showCloudBackup = !showCloudBackup"
-          title="پشتیبان‌گیری ابری Google Drive"
-        >
-          <span>☁️</span>
-          <span>Google Drive</span>
-          <span
-            v-if="cloudStore.isConnected"
-            class="inline-block w-1.5 h-1.5 rounded-full bg-emerald-500"
-            title="متصل"
-          />
-        </button>
+    <header class="relative overflow-hidden rounded-3xl bg-gradient-to-br from-brand-500 to-brand-700 p-6 text-white shadow-lg shadow-brand-500/20">
+      <div class="pointer-events-none absolute -left-10 -top-10 size-40 rounded-full bg-white/10" aria-hidden="true"></div>
+      <div class="pointer-events-none absolute -bottom-12 right-6 size-32 rounded-full bg-white/10" aria-hidden="true"></div>
+      <div class="relative flex items-center gap-4">
+        <span class="flex size-14 shrink-0 items-center justify-center rounded-2xl bg-white/15 backdrop-blur">
+          <AppIcon name="compass" :size="32" />
+        </span>
+        <div>
+          <h1 class="text-2xl font-bold">سفربان</h1>
+          <p class="mt-1 text-sm text-white/85">لوکیشن‌های سفرت را ثبت کن، برنامه سفرت را بچین</p>
+        </div>
       </div>
-    </div>
+    </header>
 
-    <div v-show="showCloudBackup" class="transition-all">
-      <CloudBackupCard />
-    </div>
+    <ul class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+      <li v-for="card in HOME_CARDS" :key="card.id">
+        <RouterLink
+          :to="card.to"
+          class="group flex h-full items-center gap-4 rounded-2xl border border-slate-200 bg-white p-5 transition-all hover:-translate-y-0.5 hover:border-brand-400 hover:shadow-md active:scale-[0.98] dark:border-slate-700 dark:bg-slate-800 motion-reduce:transition-none"
+        >
+          <span class="flex size-12 shrink-0 items-center justify-center rounded-2xl" :class="TONES[card.tone]">
+            <AppIcon :name="card.icon" :size="26" />
+          </span>
+          <span class="flex-1">
+            <span class="block font-semibold">{{ card.title }}</span>
+            <span class="mt-0.5 block text-xs leading-6 text-slate-500 dark:text-slate-400">{{ card.desc }}</span>
+          </span>
+          <AppIcon name="chevron" :size="18" class="text-slate-300 transition-colors group-hover:text-brand-500" />
+        </RouterLink>
+      </li>
+    </ul>
   </section>
 </template>
