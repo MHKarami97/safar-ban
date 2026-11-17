@@ -5,6 +5,7 @@ import { REPORT_SOURCES } from '../services/report/TravelRecordCollector.js';
 import ReportSection from '../components/report/ReportSection.vue';
 import StatCard from '../components/report/StatCard.vue';
 import BarChart from '../components/report/BarChart.vue';
+import AppIcon from '../components/AppIcon.vue';
 import { MONTH_NAMES } from '../utils/jalaliStats.js';
 import {
   formatNumber, formatMoney, formatDays, formatKm, formatPercent, formatSigned, toFaDigits
@@ -143,7 +144,7 @@ function costDeltaText(delta) {
     </div>
 
     <template v-else>
-      <ReportSection title="نگاه کلی" icon="🧭">
+      <ReportSection title="نگاه کلی" icon="compass">
         <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
           <StatCard label="تعداد سفر" :value="formatNumber(report.overview.count)" />
           <StatCard label="مجموع روز سفر" :value="formatDays(report.overview.totalDays)" />
@@ -155,14 +156,26 @@ function costDeltaText(delta) {
           <StatCard label="اولین سفر" :value="toFaDigits(report.overview.first.dateLabel)" :hint="report.overview.first.title" />
         </div>
         <ul class="text-xs text-slate-600 dark:text-slate-300 space-y-1.5 leading-6">
-          <li v-if="report.overview.longest">🏆 طولانی‌ترین سفر: {{ report.overview.longest.title }} ({{ formatDays(report.overview.longest.days) }})</li>
-          <li v-if="report.overview.costliest">💸 پرهزینه‌ترین سفر: {{ report.overview.costliest.title }} ({{ formatMoney(report.overview.costliest.cost) }})</li>
-          <li v-if="report.overview.farthest">🛣️ دورترین سفر: {{ report.overview.farthest.title }} ({{ formatKm(report.overview.farthest.km) }})</li>
-          <li>🕒 آخرین سفر: {{ report.overview.last.title }} — {{ toFaDigits(report.overview.last.dateLabel) }}</li>
+          <li v-if="report.overview.longest" class="flex items-center gap-1.5">
+            <AppIcon name="trophy" :size="15" class="text-amber-500 shrink-0" />
+            <span>طولانی‌ترین سفر: {{ report.overview.longest.title }} ({{ formatDays(report.overview.longest.days) }})</span>
+          </li>
+          <li v-if="report.overview.costliest" class="flex items-center gap-1.5">
+            <AppIcon name="money" :size="15" class="text-rose-500 shrink-0" />
+            <span>پرهزینه‌ترین سفر: {{ report.overview.costliest.title }} ({{ formatMoney(report.overview.costliest.cost) }})</span>
+          </li>
+          <li v-if="report.overview.farthest" class="flex items-center gap-1.5">
+            <AppIcon name="route" :size="15" class="text-brand-500 shrink-0" />
+            <span>دورترین سفر: {{ report.overview.farthest.title }} ({{ formatKm(report.overview.farthest.km) }})</span>
+          </li>
+          <li class="flex items-center gap-1.5">
+            <AppIcon name="clock" :size="15" class="text-slate-400 shrink-0" />
+            <span>آخرین سفر: {{ report.overview.last.title }} — {{ toFaDigits(report.overview.last.dateLabel) }}</span>
+          </li>
         </ul>
       </ReportSection>
 
-      <ReportSection title="فاصله بین سفرها" icon="⏳" subtitle="از روز پایان هر سفر تا روز شروع سفر بعدی">
+      <ReportSection title="فاصله بین سفرها" icon="hourglass" subtitle="از روز پایان هر سفر تا روز شروع سفر بعدی">
         <p v-if="report.gaps.count === 0" class="text-sm text-slate-400">برای محاسبه فاصله حداقل دو سفر لازم است.</p>
         <template v-else>
           <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
@@ -184,7 +197,7 @@ function costDeltaText(delta) {
         </template>
       </ReportSection>
 
-      <ReportSection title="میانگین و روند سالانه" icon="📅" subtitle="سالِ هر سفر بر اساس تاریخ شروع آن (شمسی) حساب می‌شود">
+      <ReportSection title="میانگین و روند سالانه" icon="calendar" subtitle="سالِ هر سفر بر اساس تاریخ شروع آن (شمسی) حساب می‌شود">
         <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
           <StatCard label="میانگین سفر در سال" :value="formatNumber(report.yearly.avgPerCalendarYear)" hint="از اولین سال تا سال جاری" />
           <StatCard label="میانگین در سال‌های فعال" :value="formatNumber(report.yearly.avgPerActiveYear)" hint="فقط سال‌هایی که سفر داشته‌اید" />
@@ -207,7 +220,7 @@ function costDeltaText(delta) {
         </div>
       </ReportSection>
 
-      <ReportSection v-if="year" title="خلاصه سال" icon="🗓️">
+      <ReportSection v-if="year" title="خلاصه سال" icon="calendarDays">
         <div class="flex items-center gap-2">
           <label class="text-xs text-slate-500" for="report-year">سال:</label>
           <select
@@ -261,7 +274,7 @@ function costDeltaText(delta) {
         </div>
       </ReportSection>
 
-      <ReportSection title="مدت سفرها" icon="⏱️">
+      <ReportSection title="مدت سفرها" icon="clock">
         <div class="grid grid-cols-2 sm:grid-cols-3 gap-3">
           <StatCard label="میانگین" :value="formatDays(report.duration.avg)" />
           <StatCard label="میانه" :value="formatDays(report.duration.median)" />
@@ -270,7 +283,7 @@ function costDeltaText(delta) {
         <BarChart :items="durationItems" bar-class="bg-sky-500" />
       </ReportSection>
 
-      <ReportSection title="فصل و ماه سفر" icon="🍂">
+      <ReportSection title="فصل و ماه سفر" icon="leaf">
         <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
           <StatCard v-if="report.seasonal.favoriteSeason" label="فصل محبوب" :value="report.seasonal.favoriteSeason.name" :hint="formatNumber(report.seasonal.favoriteSeason.count) + ' سفر'" />
           <StatCard v-if="report.seasonal.favoriteMonth" label="ماه محبوب" :value="report.seasonal.favoriteMonth.name" :hint="formatNumber(report.seasonal.favoriteMonth.count) + ' سفر'" />
@@ -294,7 +307,7 @@ function costDeltaText(delta) {
         </div>
       </ReportSection>
 
-      <ReportSection title="هزینه‌ها" icon="💰" :subtitle="'بر اساس ' + formatNumber(report.cost.tripCount) + ' سفر دارای هزینه'">
+      <ReportSection title="هزینه‌ها" icon="money" :subtitle="'بر اساس ' + formatNumber(report.cost.tripCount) + ' سفر دارای هزینه'">
         <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
           <StatCard label="میانگین هر سفر" :value="formatMoney(report.cost.avgPerTrip)" />
           <StatCard label="میانگین هر روز" :value="formatMoney(report.cost.avgPerDay)" />
@@ -321,7 +334,7 @@ function costDeltaText(delta) {
         </div>
       </ReportSection>
 
-      <ReportSection title="مناطق و مقصدها" icon="🗺️" subtitle="بر اساس مناطق فعال؛ مستقل از فیلتر بالا">
+      <ReportSection title="مناطق و مقصدها" icon="map" subtitle="بر اساس مناطق فعال؛ مستقل از فیلتر بالا">
         <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
           <StatCard label="پیشرفت کلی" :value="formatPercent(report.regions.percent)" :hint="formatNumber(report.regions.visitedLocations) + ' از ' + formatNumber(report.regions.totalLocations) + ' مکان'" />
           <StatCard label="مناطق دیده‌شده" :value="formatNumber(report.regions.touchedCount) + ' از ' + formatNumber(report.regions.regionCount)" />
@@ -344,7 +357,7 @@ function costDeltaText(delta) {
         </p>
       </ReportSection>
 
-      <ReportSection v-if="report.tripInsights.tripCount > 0" title="جزئیات برنامه‌های سفر" icon="🧳">
+      <ReportSection v-if="report.tripInsights.tripCount > 0" title="جزئیات برنامه‌های سفر" icon="bag">
         <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
           <StatCard label="مقصدهای برنامه‌ریزی‌شده" :value="formatNumber(report.tripInsights.execution.planned)" />
           <StatCard v-if="report.tripInsights.execution.completionRate !== null" label="نرخ اجرای برنامه" :value="formatPercent(report.tripInsights.execution.completionRate)" :hint="formatNumber(report.tripInsights.execution.visited) + ' دیده‌شده، ' + formatNumber(report.tripInsights.execution.missed) + ' جاافتاده'" />

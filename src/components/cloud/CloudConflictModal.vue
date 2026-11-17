@@ -3,6 +3,7 @@ import { computed, ref, watch } from 'vue'
 import { useCloudSyncStore } from '../../stores/cloudSyncStore'
 import { formatDateTimeFa } from '../../services/cloud/cloudFormat'
 import { CloudSyncError, toUserMessage } from '../../services/cloud/CloudSyncError'
+import AppIcon from '../AppIcon.vue'
 
 var store = useCloudSyncStore()
 var decision = computed(() => store.snapshot.decision)
@@ -102,7 +103,7 @@ async function handleKeepLocal() {
           aria-label="بستن"
           @click="store.dismissDecision()"
         >
-          ✕
+          <AppIcon name="close" :size="18" />
         </button>
       </div>
 
@@ -125,7 +126,15 @@ async function handleKeepLocal() {
         </div>
         <div class="flex items-center justify-between">
           <span class="text-slate-500 dark:text-slate-400">نوع ذخیره‌سازی ابری:</span>
-          <span class="font-medium">{{ decision.remoteEncrypted ? '🔒 AES-GCM (رمزشده)' : 'ساده (بدون رمز)' }}</span>
+          <span class="font-medium inline-flex items-center gap-1">
+            <template v-if="decision.remoteEncrypted">
+              <AppIcon name="lock" :size="14" class="text-amber-500" />
+              <span>AES-GCM (رمزشده)</span>
+            </template>
+            <template v-else>
+              <span>ساده (بدون رمز)</span>
+            </template>
+          </span>
         </div>
       </div>
 

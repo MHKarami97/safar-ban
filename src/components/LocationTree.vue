@@ -2,6 +2,7 @@
 import { ref, computed } from 'vue'
 import { useRegionStore } from '../stores/regionStore'
 import { jalaliDateToLabel } from '../utils/jalali'
+import AppIcon from './AppIcon.vue'
 
 var props = defineProps({ region: { type: Object, required: true } })
 defineEmits(['finish-selection', 'unmark', 'edit-record'])
@@ -61,7 +62,10 @@ var visitGroups = computed(() => {
   <div class="space-y-5">
     <div v-for="city in region.cities" :key="city.id" class="rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-4">
       <div class="flex items-center justify-between mb-3">
-        <h3 class="font-semibold text-sm sm:text-base">🏙️ {{ city.name }}</h3>
+        <h3 class="font-semibold text-sm sm:text-base flex items-center gap-2">
+          <AppIcon name="building" :size="18" class="text-brand-500" />
+          <span>{{ city.name }}</span>
+        </h3>
         <button
           type="button"
           class="text-xs px-3 py-1.5 rounded-full font-medium transition-colors"
@@ -109,7 +113,7 @@ var visitGroups = computed(() => {
             aria-label="حذف لوکیشن"
             @click="removeLocation(location.id)"
           >
-            🗑️
+            <AppIcon name="trash" :size="16" />
           </button>
         </div>
       </div>
@@ -124,20 +128,27 @@ var visitGroups = computed(() => {
     <button
       v-if="store.selectedLocationIds.length"
       type="button"
-      class="w-full min-h-[48px] rounded-xl bg-brand-500 text-white font-semibold"
+      class="w-full min-h-[48px] rounded-xl bg-brand-500 text-white font-semibold flex items-center justify-center gap-2 shadow-sm hover:bg-brand-600 transition-colors"
       @click="$emit('finish-selection')"
     >
-      ✅ اتمام و ثبت جزئیات بازدید ({{ store.selectedLocationIds.length }} مورد انتخاب‌شده)
+      <AppIcon name="check" :size="20" />
+      <span>اتمام و ثبت جزئیات بازدید ({{ store.selectedLocationIds.length }} مورد انتخاب‌شده)</span>
     </button>
 
     <div v-if="visitGroups.length" class="pt-4 border-t border-slate-200 dark:border-slate-700">
-      <h3 class="font-semibold text-sm mb-3">📌 رفته‌شده‌ها</h3>
+      <h3 class="font-semibold text-sm mb-3 flex items-center gap-1.5">
+        <AppIcon name="pin" :size="16" class="text-brand-500" />
+        <span>رفته‌شده‌ها</span>
+      </h3>
       <div class="space-y-3">
         <div v-for="group in visitGroups" :key="group.record.id" class="rounded-xl border border-slate-100 dark:border-slate-700/60 bg-slate-50 dark:bg-slate-800/60 p-3">
           <div class="flex items-start justify-between gap-2 mb-2">
             <ul class="space-y-1 flex-1">
               <li v-for="entry in group.locations" :key="entry.location.id" class="flex items-center justify-between gap-2">
-                <span class="text-sm font-medium">✅ {{ entry.cityName }} — {{ entry.location.name }}</span>
+                <span class="text-sm font-medium flex items-center gap-1.5">
+                  <AppIcon name="checkCircle" :size="15" class="text-emerald-500 shrink-0" />
+                  <span>{{ entry.cityName }} — {{ entry.location.name }}</span>
+                </span>
                 <button type="button" class="text-[11px] text-red-500 flex-shrink-0" @click="$emit('unmark', entry.location.id)">بازگرداندن</button>
               </li>
             </ul>

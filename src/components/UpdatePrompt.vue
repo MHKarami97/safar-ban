@@ -1,6 +1,7 @@
 <script setup>
 import { useRegisterSW } from "virtual:pwa-register/vue";
 import { onUnmounted } from "vue";
+import AppIcon from "./AppIcon.vue";
 
 // اجتناب از Magic Numbers و تنظیم منطقی زمان چک کردن آپدیت (۱ ساعت)
 const SW_UPDATE_INTERVAL_MS = 60 * 60 * 1000;
@@ -72,10 +73,11 @@ const reload = async () => {
         <span class="text-sm flex-1">نسخه جدید سفربان آمادست</span>
         <button
           type="button"
-          class="min-h-[44px] px-4 rounded-xl bg-brand-500 hover:bg-brand-600 text-sm font-medium transition-colors"
+          class="inline-flex items-center gap-1.5 min-h-[44px] px-4 rounded-xl bg-brand-500 hover:bg-brand-600 text-sm font-medium transition-colors"
           @click="reload"
         >
-          به‌روزرسانی
+          <AppIcon name="refresh" :size="16" />
+          <span>به‌روزرسانی</span>
         </button>
       </div>
     </aside>

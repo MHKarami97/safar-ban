@@ -1,6 +1,7 @@
 <script setup>
 import { ref, computed, watch } from 'vue'
 import { jalaliMonthLength, parseJalali, formatJalali, todayJalali, JALALI_MONTH_NAMES } from '../utils/jalali'
+import AppIcon from './AppIcon.vue'
 
 var props = defineProps({
   modelValue: { type: String, default: '' },
@@ -38,15 +39,16 @@ function cancel() { isOpen.value = false }
 </script>
 
 <template>
-  <div class="relative">
+  <div class="relative flex items-center">
     <input
       type="text"
       readonly
       :value="modelValue"
       :placeholder="placeholder"
-      class="w-full min-h-[44px] rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 px-4 text-sm cursor-pointer focus:outline-none focus:ring-2 focus:ring-brand-400"
+      class="w-full min-h-[44px] rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 pr-4 pl-10 text-sm cursor-pointer focus:outline-none focus:ring-2 focus:ring-brand-400"
       @click="open"
     />
+    <AppIcon name="calendar" :size="18" class="absolute left-3 text-slate-400 pointer-events-none" />
     <Transition name="fade">
       <div v-if="isOpen" class="fixed inset-0 z-30 flex items-center justify-center bg-black/40 px-4" @click.self="cancel">
         <div class="bg-white dark:bg-slate-800 rounded-2xl p-5 w-full max-w-sm shadow-xl">

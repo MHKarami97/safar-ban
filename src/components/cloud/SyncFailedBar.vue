@@ -1,6 +1,7 @@
 <script setup>
 import { computed, ref } from 'vue'
 import { useCloudSyncStore } from '../../stores/cloudSyncStore'
+import AppIcon from '../AppIcon.vue'
 
 var store = useCloudSyncStore()
 var dismissedKey = ref('')
@@ -37,7 +38,7 @@ async function retry() {
     >
       <div class="pointer-events-auto flex w-full max-w-lg items-center justify-between gap-3 rounded-xl bg-amber-600 px-4 py-2.5 text-xs font-medium text-white shadow-lg ring-1 ring-amber-700/30">
         <div class="flex min-w-0 items-center gap-2">
-          <span class="text-base shrink-0" aria-hidden="true">⚠️</span>
+          <AppIcon name="warning" :size="18" class="text-amber-100 shrink-0" />
           <span class="truncate">{{ store.failureBarMessage }}</span>
         </div>
         <div class="flex shrink-0 items-center gap-2">
@@ -51,12 +52,12 @@ async function retry() {
           </button>
           <button
             type="button"
-            class="rounded-lg p-1 text-white/80 transition hover:bg-white/10 hover:text-white"
+            class="flex size-7 items-center justify-center rounded-lg p-1 text-white/80 transition hover:bg-white/10 hover:text-white"
             title="بستن"
             aria-label="بستن"
             @click="dismiss"
           >
-            ✕
+            <AppIcon name="close" :size="16" />
           </button>
         </div>
       </div>

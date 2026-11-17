@@ -1,6 +1,7 @@
 <script setup>
 import { ref } from 'vue'
 import { useRegionStore } from '../stores/regionStore'
+import AppIcon from '../components/AppIcon.vue'
 
 var store = useRegionStore()
 var newName = ref('')
@@ -12,6 +13,12 @@ function createCustom() {
   store.createCustomRegion(newName.value.trim(), newIcon.value, newType.value)
   newName.value = ''
 }
+
+function getIconName(region) {
+  if (region.icon === '📍' || region.type === 'province') return 'pin'
+  if (region.icon === '🌍' || region.type === 'country') return 'globe'
+  return region.icon
+}
 </script>
 
 <template>
@@ -19,10 +26,13 @@ function createCustom() {
     <h1 class="text-xl sm:text-2xl font-bold">مدیریت استان‌ها و کشورها</h1>
 
     <div class="rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-4">
-      <h2 class="text-sm font-semibold mb-3">استان‌ها (فعال/فعال در صفحه اول)</h2>
+      <h2 class="text-sm font-semibold mb-3">استان‌ها (فعال/غیرفعال در صفحه اول)</h2>
       <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
-        <label v-for="region in store.provinces" :key="region.id" class="flex items-center justify-between gap-2 px-3 py-2 rounded-xl bg-slate-50 dark:bg-slate-900/40">
-          <span class="text-sm">{{ region.icon }} {{ region.name }}</span>
+        <label v-for="region in store.provinces" :key="region.id" class="flex items-center justify-between gap-2 px-3 py-2 rounded-xl bg-slate-50 dark:bg-slate-900/40 cursor-pointer hover:bg-slate-100 dark:hover:bg-slate-900/70 transition-colors">
+          <span class="text-sm inline-flex items-center gap-2">
+            <AppIcon :name="getIconName(region)" :size="16" class="text-brand-500 shrink-0" />
+            <span>{{ region.name }}</span>
+          </span>
           <input type="checkbox" :checked="region.isEnabled" @change="store.toggleRegionEnabled(region.id)" />
         </label>
       </div>
@@ -31,8 +41,11 @@ function createCustom() {
     <div class="rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-4">
       <h2 class="text-sm font-semibold mb-3">کشورها (پیش‌فرض فعال — فقط با انتخاب شما نمایش داده می‌شوند)</h2>
       <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
-        <label v-for="region in store.countries" :key="region.id" class="flex items-center justify-between gap-2 px-3 py-2 rounded-xl bg-slate-50 dark:bg-slate-900/40">
-          <span class="text-sm">{{ region.icon }} {{ region.name }}</span>
+        <label v-for="region in store.countries" :key="region.id" class="flex items-center justify-between gap-2 px-3 py-2 rounded-xl bg-slate-50 dark:bg-slate-900/40 cursor-pointer hover:bg-slate-100 dark:hover:bg-slate-900/70 transition-colors">
+          <span class="text-sm inline-flex items-center gap-2">
+            <AppIcon :name="getIconName(region)" :size="16" class="text-brand-500 shrink-0" />
+            <span>{{ region.name }}</span>
+          </span>
           <input type="checkbox" :checked="region.isEnabled" @change="store.toggleRegionEnabled(region.id)" />
         </label>
       </div>
@@ -47,7 +60,7 @@ function createCustom() {
           <option value="province">استان</option>
           <option value="country">کشور</option>
         </select>
-        <button type="button" class="min-h-[44px] px-4 rounded-xl bg-brand-500 text-white text-sm" @click="createCustom">افزودن</button>
+        <button type="button" class="min-h-[44px] px-4 rounded-xl bg-brand-500 text-white text-sm font-medium hover:bg-brand-600 transition-colors" @click="createCustom">افزودن</button>
       </div>
     </div>
   </section>

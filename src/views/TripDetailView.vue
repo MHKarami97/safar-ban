@@ -10,6 +10,7 @@ import TripStatusBadge from '../components/TripStatusBadge.vue'
 import TripEventForm from '../components/TripEventForm.vue'
 import ConfirmDialog from '../components/ConfirmDialog.vue'
 import TagMultiSelect from '../components/TagMultiSelect.vue'
+import AppIcon from '../components/AppIcon.vue'
 
 var props = defineProps({ id: { type: String, required: true } })
 var router = useRouter()
@@ -69,10 +70,26 @@ function deleteTrip() {
     </div>
 
     <div class="rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-4 grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
-      <div>📅 تاریخ شروع: {{ jalaliDateToLabel(trip.startDateJalali) }}</div>
-      <div>📅 تاریخ پایان: {{ jalaliDateToLabel(trip.endDateJalali) }}</div>
-      <div>🗓️ تعداد روز: {{ trip.durationDays }}</div>
-      <div>💰 هزینه در نظر گرفته‌شده: {{ Number(trip.budget).toLocaleString('fa-IR') }} تومان</div>
+      <div class="flex items-center gap-2 text-slate-700 dark:text-slate-200">
+        <AppIcon name="calendar" :size="16" class="text-brand-500 shrink-0" />
+        <span class="text-slate-500 dark:text-slate-400">تاریخ شروع:</span>
+        <span class="font-medium">{{ jalaliDateToLabel(trip.startDateJalali) }}</span>
+      </div>
+      <div class="flex items-center gap-2 text-slate-700 dark:text-slate-200">
+        <AppIcon name="calendar" :size="16" class="text-brand-500 shrink-0" />
+        <span class="text-slate-500 dark:text-slate-400">تاریخ پایان:</span>
+        <span class="font-medium">{{ jalaliDateToLabel(trip.endDateJalali) }}</span>
+      </div>
+      <div class="flex items-center gap-2 text-slate-700 dark:text-slate-200">
+        <AppIcon name="calendarDays" :size="16" class="text-brand-500 shrink-0" />
+        <span class="text-slate-500 dark:text-slate-400">تعداد روز:</span>
+        <span class="font-medium">{{ trip.durationDays }}</span>
+      </div>
+      <div class="flex items-center gap-2 text-slate-700 dark:text-slate-200">
+        <AppIcon name="money" :size="16" class="text-brand-500 shrink-0" />
+        <span class="text-slate-500 dark:text-slate-400">هزینه در نظر گرفته‌شده:</span>
+        <span class="font-medium">{{ Number(trip.budget).toLocaleString('fa-IR') }} تومان</span>
+      </div>
       <div class="sm:col-span-2">
         <label class="text-xs text-slate-400 block mb-1">وضعیت سفر</label>
         <select :value="trip.status" class="min-h-[40px] rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 px-3 text-sm" @change="tripStore.setStatus(trip.id, $event.target.value)">
@@ -82,7 +99,10 @@ function deleteTrip() {
     </div>
 
     <div v-if="trip.weatherSnapshot" class="rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-4">
-      <h2 class="text-sm font-semibold mb-3">🌤️ پیش‌بینی آب‌وهوا — {{ trip.weatherSnapshot.resolvedName || trip.weatherCity }}</h2>
+      <h2 class="text-sm font-semibold mb-3 flex items-center gap-2">
+        <AppIcon name="weather" :size="18" class="text-amber-500 shrink-0" />
+        <span>پیش‌بینی آب‌وهوا — {{ trip.weatherSnapshot.resolvedName || trip.weatherCity }}</span>
+      </h2>
       <div class="flex gap-2 overflow-x-auto no-scrollbar">
         <div v-for="day in trip.weatherSnapshot.daily" :key="day.date" class="flex-shrink-0 rounded-xl bg-brand-50 dark:bg-brand-700/20 px-3 py-2 text-center text-xs">
           <div>{{ day.date.slice(5) }}</div>
@@ -91,8 +111,9 @@ function deleteTrip() {
         </div>
       </div>
     </div>
-    <div v-else-if="trip.weatherCity" class="rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-4 text-xs text-slate-400">
-      🌤️ پیش‌بینی آب‌وهوا برای «{{ trip.weatherCity }}» ثبت نشده بود.
+    <div v-else-if="trip.weatherCity" class="rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-4 text-xs text-slate-400 flex items-center gap-2">
+      <AppIcon name="weather" :size="16" class="text-slate-400 shrink-0" />
+      <span>پیش‌بینی آب‌وهوا برای «{{ trip.weatherCity }}» ثبت نشده بود.</span>
     </div>
 
     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -137,7 +158,10 @@ function deleteTrip() {
               <div class="text-slate-400">تا {{ d.endTime }}</div>
             </div>
             <div class="flex-1">
-              <p class="text-sm font-medium">📍 {{ d.name }}</p>
+              <p class="text-sm font-medium flex items-center gap-1.5">
+                <AppIcon name="pin" :size="15" class="text-brand-500 shrink-0" />
+                <span>{{ d.name }}</span>
+              </p>
               <p v-if="d.note" class="text-xs text-slate-400 mt-0.5">{{ d.note }}</p>
             </div>
           </div>
@@ -145,7 +169,9 @@ function deleteTrip() {
         <p v-else class="text-xs text-slate-400">مقصدی برای این روز ثبت نشده</p>
 
         <div v-if="trip.accommodationForDay(day)" class="mt-2 flex items-start gap-3 rounded-xl bg-brand-50 dark:bg-brand-700/10 p-3">
-          <span class="text-lg flex-shrink-0">🏨</span>
+          <span class="flex size-8 shrink-0 items-center justify-center rounded-lg bg-brand-100 text-brand-600 dark:bg-brand-900/40 dark:text-brand-300">
+            <AppIcon name="hotel" :size="18" />
+          </span>
           <div>
             <p class="text-sm font-medium">اقامتگاه: {{ trip.accommodationForDay(day).name }}</p>
             <p class="text-xs text-slate-500 dark:text-slate-400">{{ trip.accommodationForDay(day).address }} — {{ trip.accommodationForDay(day).phone }}</p>
@@ -157,31 +183,70 @@ function deleteTrip() {
     <div class="rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-4">
       <div class="flex items-center justify-between mb-3">
         <h2 class="text-sm font-semibold">گزارش رویدادها</h2>
-        <button type="button" class="text-xs px-3 py-1.5 rounded-full bg-brand-500 text-white" @click="openNewEvent">+ ثبت رویداد</button>
+        <button
+          type="button"
+          class="inline-flex items-center gap-1 text-xs px-3 py-1.5 rounded-full bg-brand-500 hover:bg-brand-600 text-white transition-colors"
+          @click="openNewEvent"
+        >
+          <AppIcon name="plus" :size="13" />
+          <span>ثبت رویداد</span>
+        </button>
       </div>
       <div v-for="event in trip.events" :key="event.id" class="border border-slate-100 dark:border-slate-700/60 rounded-xl p-3 mb-2 space-y-1.5">
         <div class="flex items-start justify-between gap-2">
-          <p class="text-sm font-medium">📅 {{ jalaliDateToLabel(event.dateJalali) }}</p>
+          <p class="text-sm font-medium flex items-center gap-1.5">
+            <AppIcon name="calendar" :size="15" class="text-brand-500 shrink-0" />
+            <span>{{ jalaliDateToLabel(event.dateJalali) }}</span>
+          </p>
           <div class="flex items-center gap-2 flex-shrink-0">
             <button type="button" class="text-xs text-brand-600" @click="openEditEvent(event)">ویرایش</button>
             <button type="button" class="text-xs text-red-500" @click="removeEvent(event.id)">حذف</button>
           </div>
         </div>
-        <p class="text-xs text-slate-500">💰 هزینه: {{ event.cost.toLocaleString('fa-IR') }} تومان &nbsp;·&nbsp; 🚗 وسیله: {{ event.vehicleUsed || '—' }}</p>
-        <p v-if="event.visitedDestinationIds.length" class="text-xs text-brand-600">✅ رفتیم به: {{ event.visitedDestinationIds.map(destinationName).join('، ') }}</p>
-        <p v-if="event.missedDestinationIds.length" class="text-xs text-red-500">❌ نرسیدیم به: {{ event.missedDestinationIds.map(destinationName).join('، ') }}</p>
-        <p v-if="event.locationNotes" class="text-xs text-slate-600 dark:text-slate-300">📍 وضعیت لوکیشن‌ها: {{ event.locationNotes }}</p>
-        <p v-if="event.accommodationNotes" class="text-xs text-slate-600 dark:text-slate-300">🏨 وضعیت اقامتگاه: {{ event.accommodationNotes }}</p>
-        <p v-if="event.description" class="text-xs text-slate-500">📝 توضیحات: {{ event.description }}</p>
+        <div class="flex items-center flex-wrap gap-x-3 gap-y-1 text-xs text-slate-500">
+          <span class="inline-flex items-center gap-1">
+            <AppIcon name="money" :size="14" class="text-slate-400 shrink-0" />
+            <span>هزینه: {{ event.cost.toLocaleString('fa-IR') }} تومان</span>
+          </span>
+          <span class="inline-flex items-center gap-1">
+            <AppIcon name="car" :size="14" class="text-slate-400 shrink-0" />
+            <span>وسیله: {{ event.vehicleUsed || '—' }}</span>
+          </span>
+        </div>
+        <p v-if="event.visitedDestinationIds.length" class="text-xs text-brand-600 dark:text-brand-400 flex items-center gap-1">
+          <AppIcon name="checkCircle" :size="14" class="shrink-0" />
+          <span>رفتیم به: {{ event.visitedDestinationIds.map(destinationName).join('، ') }}</span>
+        </p>
+        <p v-if="event.missedDestinationIds.length" class="text-xs text-rose-500 flex items-center gap-1">
+          <AppIcon name="xCircle" :size="14" class="shrink-0" />
+          <span>نرسیدیم به: {{ event.missedDestinationIds.map(destinationName).join('، ') }}</span>
+        </p>
+        <p v-if="event.locationNotes" class="text-xs text-slate-600 dark:text-slate-300 flex items-center gap-1">
+          <AppIcon name="pin" :size="14" class="text-slate-400 shrink-0" />
+          <span>وضعیت لوکیشن‌ها: {{ event.locationNotes }}</span>
+        </p>
+        <p v-if="event.accommodationNotes" class="text-xs text-slate-600 dark:text-slate-300 flex items-center gap-1">
+          <AppIcon name="hotel" :size="14" class="text-slate-400 shrink-0" />
+          <span>وضعیت اقامتگاه: {{ event.accommodationNotes }}</span>
+        </p>
+        <p v-if="event.description" class="text-xs text-slate-500 flex items-center gap-1">
+          <AppIcon name="fileText" :size="14" class="text-slate-400 shrink-0" />
+          <span>توضیحات: {{ event.description }}</span>
+        </p>
       </div>
       <p v-if="!trip.events.length" class="text-xs text-slate-400">رویدادی ثبت نشده</p>
     </div>
 
     <div class="flex gap-2">
-      <button type="button" class="flex-1 min-h-[44px] rounded-xl bg-slate-800 text-white text-sm font-medium dark:bg-slate-100 dark:text-slate-900" @click="tripStore.printTrip(trip.id)">
-        🖨️ خروجی / پرینت سفر
+      <button
+        type="button"
+        class="flex-1 min-h-[44px] rounded-xl bg-slate-800 text-white text-sm font-medium dark:bg-slate-100 dark:text-slate-900 inline-flex items-center justify-center gap-2 hover:bg-slate-700 dark:hover:bg-slate-200 transition-colors"
+        @click="tripStore.printTrip(trip.id)"
+      >
+        <AppIcon name="printer" :size="18" />
+        <span>خروجی / پرینت سفر</span>
       </button>
-      <button type="button" class="min-h-[44px] px-4 rounded-xl border border-red-300 text-red-500 text-sm" @click="deleteTrip">حذف سفر</button>
+      <button type="button" class="min-h-[44px] px-4 rounded-xl border border-red-300 text-red-500 text-sm hover:bg-red-50 dark:hover:bg-red-950/20 transition-colors" @click="deleteTrip">حذف سفر</button>
     </div>
 
     <TripEventForm

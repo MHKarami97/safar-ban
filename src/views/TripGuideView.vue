@@ -1,15 +1,17 @@
 <script setup>
+import AppIcon from '../components/AppIcon.vue'
+
 var steps = [
-  { icon: '📝', title: 'اطلاعات کلی سفر', text: 'عنوان، توضیحات، تاریخ شروع شمسی، تعداد روز سفر و هزینه در نظر گرفته‌شده را وارد کن. تاریخ پایان به‌صورت خودکار محاسبه می‌شود.' },
-  { icon: '⛅', title: 'پیش‌بینی آب‌وهوا', text: 'نام شهر مقصد را وارد کن تا هوای هفت روز آینده نمایش داده شود.' },
-  { icon: '🎒', title: 'وسیله، همسفر، مدارک و تجهیزات', text: 'از لیست‌های موجود انتخاب کن یا در صورت نبود، مورد جدید اضافه کن.' },
-  { icon: '📜', title: 'نکات فرهنگی', text: 'قوانین محلی و نکات فرهنگی مقصد را در همین مرحله ثبت کن.' },
-  { icon: '🗺️', title: 'چیدن مقاصد روزانه', text: 'برای هر روز، مقصدها را با ساعت شروع و مدت‌زمان تخمینی وارد کن؛ پایان هر مقصد خودکار محاسبه می‌شود.' },
-  { icon: '⚠️', title: 'هشدار همپوشانی زمانی', text: 'اگر دو مقصد در یک روز زمان‌شان روی هم بیفتد، هشدار داده می‌شود تا زمان شناور در نظر بگیری.' },
-  { icon: '🏨', title: 'اقامتگاه هر روز', text: 'برای هر روز می‌توانی اقامتگاه (نام، آدرس، شماره تماس) را هم ثبت کنی.' },
-  { icon: '📋', title: 'ثبت رویداد روزانه', text: 'در طول سفر، از دکمه «ثبت رویداد» برای گزارش روزانه استفاده کن.' },
-  { icon: '🔄', title: 'وضعیت سفر', text: 'وضعیت سفر را از «در حال برنامه‌ریزی» تا «پایان یافته» به‌روزرسانی کن. سفرهای پایان‌یافته در بخش جدایی در پایین لیست سفرها نمایش داده می‌شوند.' },
-  { icon: '🖨️', title: 'خروجی و پرینت', text: 'هر زمان که خواستی، از دکمه خروجی هر سفر یک نسخه پرینت‌شده و شیک از کل برنامه بگیر.' }
+  { icon: 'fileText', title: 'اطلاعات کلی سفر', text: 'عنوان، توضیحات، تاریخ شروع شمسی، تعداد روز سفر و هزینه در نظر گرفته‌شده را وارد کن. تاریخ پایان به‌صورت خودکار محاسبه می‌شود.' },
+  { icon: 'weather', title: 'پیش‌بینی آب‌وهوا', text: 'نام شهر مقصد را وارد کن تا هوای هفت روز آینده نمایش داده شود.' },
+  { icon: 'backpack', title: 'وسیله، همسفر، مدارک و تجهیزات', text: 'از لیست‌های موجود انتخاب کن یا در صورت نبود، مورد جدید اضافه کن.' },
+  { icon: 'scroll', title: 'نکات فرهنگی', text: 'قوانین محلی و نکات فرهنگی مقصد را در همین مرحله ثبت کن.' },
+  { icon: 'map', title: 'چیدن مقاصد روزانه', text: 'برای هر روز، مقصدها را با ساعت شروع و مدت‌زمان تخمینی وارد کن؛ پایان هر مقصد خودکار محاسبه می‌شود.' },
+  { icon: 'warning', title: 'هشدار همپوشانی زمانی', text: 'اگر دو مقصد در یک روز زمان‌شان روی هم بیفتد، هشدار داده می‌شود تا زمان شناور در نظر بگیری.' },
+  { icon: 'hotel', title: 'اقامتگاه هر روز', text: 'برای هر روز می‌توانی اقامتگاه (نام، آدرس، شماره تماس) را هم ثبت کنی.' },
+  { icon: 'clipboard', title: 'ثبت رویداد روزانه', text: 'در طول سفر، از دکمه «ثبت رویداد» برای گزارش روزانه استفاده کن.' },
+  { icon: 'refresh', title: 'وضعیت سفر', text: 'وضعیت سفر را از «در حال برنامه‌ریزی» تا «پایان یافته» به‌روزرسانی کن. سفرهای پایان‌یافته در بخش جدایی در پایین لیست سفرها نمایش داده می‌شوند.' },
+  { icon: 'printer', title: 'خروجی و پرینت', text: 'هر زمان که خواستی، از دکمه خروجی هر سفر یک نسخه پرینت‌شده و شیک از کل برنامه بگیر.' }
 ]
 </script>
 
@@ -27,7 +29,9 @@ var steps = [
         class="rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-5"
       >
         <div class="flex items-center gap-3 mb-2">
-          <span class="w-9 h-9 flex items-center justify-center rounded-xl bg-brand-50 dark:bg-brand-700/30 text-lg">{{ step.icon }}</span>
+          <span class="w-9 h-9 flex items-center justify-center rounded-xl bg-brand-50 text-brand-600 dark:bg-brand-950/40 dark:text-brand-300">
+            <AppIcon :name="step.icon" :size="20" />
+          </span>
           <h3 class="font-semibold text-sm">{{ index + 1 }}. {{ step.title }}</h3>
         </div>
         <p class="text-xs text-slate-500 dark:text-slate-400 leading-6">{{ step.text }}</p>
@@ -36,9 +40,10 @@ var steps = [
 
     <RouterLink
       to="/trips/create"
-      class="block text-center min-h-[52px] leading-[52px] rounded-2xl bg-brand-500 hover:bg-brand-600 text-white text-base font-semibold shadow-sm transition-colors"
+      class="flex items-center justify-center gap-2 min-h-[52px] rounded-2xl bg-brand-500 hover:bg-brand-600 text-white text-base font-semibold shadow-sm transition-colors"
     >
-      شروع ساخت برنامه سفر 🚀
+      <span>شروع ساخت برنامه سفر</span>
+      <AppIcon name="rocket" :size="20" />
     </RouterLink>
   </section>
 </template>

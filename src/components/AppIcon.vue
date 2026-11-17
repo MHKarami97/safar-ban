@@ -13,6 +13,7 @@ var paths = computed(() => ICON_PATHS[props.name] ?? '')
 
 <template>
   <svg
+    v-if="paths"
     viewBox="0 0 24 24"
     fill="none"
     stroke="currentColor"
@@ -26,4 +27,12 @@ var paths = computed(() => ICON_PATHS[props.name] ?? '')
     :height="size"
     v-html="paths"
   />
+  <span
+    v-else
+    class="inline-flex shrink-0 items-center justify-center leading-none select-none"
+    :style="{ fontSize: `${size * 0.85}px`, width: `${size}px`, height: `${size}px` }"
+    aria-hidden="true"
+  >
+    {{ name }}
+  </span>
 </template>

@@ -3,6 +3,7 @@ import { computed, onMounted, ref } from 'vue'
 import { CLOUD_CONFIG } from '../../services/cloud/cloudConfig'
 import { toUserMessage } from '../../services/cloud/CloudSyncError'
 import { useCloudSyncStore } from '../../stores/cloudSyncStore'
+import AppIcon from '../AppIcon.vue'
 
 var store = useCloudSyncStore()
 var minLength = CLOUD_CONFIG.minPassphraseLength
@@ -93,8 +94,10 @@ async function handleRollback() {
 <template>
   <div class="rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-4 sm:p-5 shadow-sm space-y-4">
     <div class="flex items-center justify-between gap-2 flex-wrap">
-      <div class="flex items-center gap-2">
-        <span class="text-xl">☁️</span>
+      <div class="flex items-center gap-2.5">
+        <span class="flex size-9 items-center justify-center rounded-xl bg-brand-50 text-brand-600 dark:bg-brand-950/40 dark:text-brand-400">
+          <AppIcon name="cloud" :size="20" />
+        </span>
         <h2 class="text-base font-bold text-slate-800 dark:text-slate-100">پشتیبان‌گیری خودکار در Google Drive</h2>
       </div>
       <span :class="['rounded-full px-2.5 py-0.5 text-xs font-semibold', pillClass]">
@@ -128,10 +131,11 @@ async function handleRollback() {
         v-if="!store.isConnected"
         type="button"
         :disabled="isWorking"
-        class="min-h-[40px] px-4 rounded-xl bg-brand-500 text-white text-xs font-medium hover:bg-brand-600 transition-colors"
+        class="inline-flex items-center gap-1.5 min-h-[40px] px-4 rounded-xl bg-brand-500 text-white text-xs font-medium hover:bg-brand-600 transition-colors"
         @click="handleConnect"
       >
-        🔗 اتصال به Google Drive
+        <AppIcon name="link" :size="16" />
+        <span>اتصال به Google Drive</span>
       </button>
 
       <template v-else>
@@ -139,29 +143,31 @@ async function handleRollback() {
           v-if="snapshot.status === 'needs-reconnect' || snapshot.status === 'error'"
           type="button"
           :disabled="isWorking"
-          class="min-h-[40px] px-3 rounded-xl border border-slate-300 dark:border-slate-600 text-xs font-medium hover:bg-slate-50 dark:hover:bg-slate-800"
+          class="inline-flex items-center gap-1.5 min-h-[40px] px-3 rounded-xl border border-slate-300 dark:border-slate-600 text-xs font-medium hover:bg-slate-50 dark:hover:bg-slate-800"
           @click="handleConnect"
         >
-          🔄 اتصال دوباره
+          <AppIcon name="refresh" :size="15" />
+          <span>اتصال دوباره</span>
         </button>
 
         <button
           v-if="snapshot.decision && snapshot.decision.dismissed"
           type="button"
-          class="min-h-[40px] px-3 rounded-xl border border-slate-300 dark:border-slate-600 text-xs font-medium hover:bg-slate-50 dark:hover:bg-slate-800"
+          class="inline-flex items-center gap-1.5 min-h-[40px] px-3 rounded-xl border border-slate-300 dark:border-slate-600 text-xs font-medium hover:bg-slate-50 dark:hover:bg-slate-800"
           @click="store.reopenDecision()"
         >
-          ☁️ بررسی نسخه‌ی ابری
+          <AppIcon name="cloud" :size="15" />
+          <span>بررسی نسخه‌ی ابری</span>
         </button>
 
         <button
           type="button"
           :disabled="isWorking || store.isBusy || !!snapshot.decision"
-          class="min-h-[40px] px-4 rounded-xl bg-brand-500 text-white text-xs font-medium hover:bg-brand-600 transition-colors disabled:opacity-50"
+          class="inline-flex items-center gap-1.5 min-h-[40px] px-4 rounded-xl bg-brand-500 text-white text-xs font-medium hover:bg-brand-600 transition-colors disabled:opacity-50"
           @click="handleBackupNow"
         >
-          <span :class="store.isBusy ? 'inline-block animate-spin' : ''">🔄</span>
-          پشتیبان‌گیری همین حالا
+          <AppIcon name="refresh" :size="16" :class="store.isBusy ? 'animate-spin' : ''" />
+          <span>پشتیبان‌گیری همین حالا</span>
         </button>
 
         <button
@@ -178,13 +184,13 @@ async function handleRollback() {
     <!-- زیرپنل رمزنگاری سمت کلاینت (Zero-Knowledge) -->
     <div class="flex flex-col gap-3 rounded-xl border border-slate-200 bg-slate-50/70 p-3.5 dark:border-slate-800 dark:bg-slate-900/60">
       <div class="flex items-center gap-1.5">
-        <span class="text-base" aria-hidden="true">🔐</span>
+        <AppIcon name="lock" :size="16" class="text-brand-500" />
         <h3 class="text-xs font-bold text-slate-800 dark:text-slate-200">رمزنگاری سرتاسری اختیاری (Zero-Knowledge)</h3>
       </div>
 
       <template v-if="snapshot.encryptionEnabled">
         <div class="flex items-start gap-2 rounded-lg bg-emerald-50 p-2.5 text-xs text-emerald-800 dark:bg-emerald-950/40 dark:text-emerald-200">
-          <span class="text-base shrink-0">🛡️</span>
+          <AppIcon name="shield" :size="18" class="text-emerald-600 dark:text-emerald-400 shrink-0 mt-0.5" />
           <div>
             <strong class="font-bold">رمزنگاری استاندارد AES-GCM ۲۵۶ فعال است.</strong>
             <p class="mt-0.5 text-[11px] leading-relaxed text-emerald-700 dark:text-emerald-300">
@@ -235,10 +241,11 @@ async function handleRollback() {
           <button
             type="button"
             :disabled="isWorking || passphrase.length < minLength || passphrase !== passphraseConfirm"
-            class="min-h-[36px] px-4 rounded-xl border border-slate-300 dark:border-slate-600 text-xs font-medium hover:bg-slate-50 dark:hover:bg-slate-800 disabled:opacity-50"
+            class="inline-flex items-center gap-1.5 min-h-[36px] px-4 rounded-xl border border-slate-300 dark:border-slate-600 text-xs font-medium hover:bg-slate-50 dark:hover:bg-slate-800 disabled:opacity-50"
             @click="handleEnableEncryption"
           >
-            🛡️ فعال‌سازی رمزنگاری
+            <AppIcon name="shield" :size="15" />
+            <span>فعال‌سازی رمزنگاری</span>
           </button>
         </div>
       </template>

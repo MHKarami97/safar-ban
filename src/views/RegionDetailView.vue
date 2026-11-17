@@ -6,6 +6,7 @@ import ProgressBar from '../components/ProgressBar.vue'
 import LocationTree from '../components/LocationTree.vue'
 import VisitRecordModal from '../components/VisitRecordModal.vue'
 import ConfirmDialog from '../components/ConfirmDialog.vue'
+import AppIcon from '../components/AppIcon.vue'
 
 var props = defineProps({ id: { type: String, required: true } })
 var store = useRegionStore()
@@ -49,13 +50,22 @@ function saveVisit(details) {
 function handleUnmark(locationId) {
   requestConfirm('این لوکیشن به حالت رفته‌نشده برگردد؟', () => store.unmarkVisited(props.id, locationId))
 }
+
+function getIconName(r) {
+  if (!r) return 'pin'
+  if (r.icon === '📍' || r.type === 'province') return 'pin'
+  if (r.icon === '🌍' || r.type === 'country') return 'globe'
+  return r.icon
+}
 </script>
 
 <template>
   <section v-if="region" class="space-y-6">
     <div>
-      <h1 class="text-xl sm:text-2xl font-bold flex items-center gap-2">
-        <span>{{ region.icon }}</span>
+      <h1 class="text-xl sm:text-2xl font-bold flex items-center gap-2.5">
+        <span class="flex size-10 shrink-0 items-center justify-center rounded-2xl bg-brand-50 text-brand-600 dark:bg-brand-950/40 dark:text-brand-300">
+          <AppIcon :name="getIconName(region)" :size="24" />
+        </span>
         <span>{{ region.name }}</span>
       </h1>
       <p class="text-sm text-slate-400 mt-1">{{ region.visitedCount }} از {{ region.totalCount }} لوکیشن رفته شده</p>

@@ -7,6 +7,7 @@ import { WeatherService } from '../services/trip/WeatherService'
 import JalaliDatePicker from '../components/JalaliDatePicker.vue'
 import TagMultiSelect from '../components/TagMultiSelect.vue'
 import NumberInput from '../components/NumberInput.vue'
+import AppIcon from '../components/AppIcon.vue'
 import { todayJalali, formatJalali, addDaysJalali, parseJalali } from '../utils/jalali'
 
 var router = useRouter()
@@ -127,9 +128,19 @@ function submit() {
         <label class="text-sm block mb-1">نکات فرهنگی و قوانین محلی</label>
         <div v-for="(note, index) in form.culturalNotes" :key="index" class="flex gap-2 mb-2">
           <input v-model="form.culturalNotes[index]" type="text" placeholder="مثلا رعایت پوشش در اماکن مذهبی" class="flex-1 min-h-[40px] rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 px-3 text-sm" />
-          <button type="button" class="min-w-[40px] min-h-[40px] text-slate-400 hover:text-red-500" @click="removeCulturalNote(index)">🗑️</button>
+          <button
+            type="button"
+            class="flex size-10 items-center justify-center rounded-xl text-slate-400 hover:bg-rose-50 hover:text-rose-500 dark:hover:bg-rose-950/30 transition-colors"
+            aria-label="حذف نکته"
+            @click="removeCulturalNote(index)"
+          >
+            <AppIcon name="trash" :size="18" />
+          </button>
         </div>
-        <button type="button" class="text-xs text-brand-600" @click="addCulturalNote">+ افزودن نکته</button>
+        <button type="button" class="inline-flex items-center gap-1 text-xs text-brand-600 hover:text-brand-700 font-medium" @click="addCulturalNote">
+          <AppIcon name="plus" :size="14" />
+          <span>افزودن نکته</span>
+        </button>
       </div>
 
       <TagMultiSelect v-model="form.documentIds" :items="catalog.documents" label="مدارک مورد نیاز" @add-custom="(name) => addCustomCatalog('documents', name)" />

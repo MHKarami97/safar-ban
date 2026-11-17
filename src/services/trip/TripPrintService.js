@@ -28,7 +28,7 @@ export class TripPrintService {
           <div class="weather-card">
             <div class="weather-date">${day.date.slice(5)}</div>
             <div class="weather-temp"><b>${Math.round(day.max)}°</b> / ${Math.round(day.min)}°</div>
-            <div class="weather-rain">☂ ${day.rainChance}٪</div>
+            <div class="weather-rain"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:middle;margin-left:3px;"><path d="M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9Z"/></svg>${day.rainChance}٪ باران</div>
           </div>`)
         .join('')
       var cityLabel = trip.weatherSnapshot.resolvedName || trip.weatherCity

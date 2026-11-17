@@ -3,6 +3,7 @@ import { computed, reactive, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { useTripStore } from '../stores/tripStore'
 import DestinationCard from '../components/DestinationCard.vue'
+import AppIcon from '../components/AppIcon.vue'
 
 var props = defineProps({ id: { type: String, required: true } })
 var router = useRouter()
@@ -101,10 +102,14 @@ function finish() {
     </div>
 
     <div class="rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-4 space-y-3">
-      <h2 class="text-sm font-semibold">📍 مقصدهای روز {{ activeDay }}</h2>
+      <h2 class="text-sm font-semibold flex items-center gap-1.5">
+        <AppIcon name="pin" :size="16" class="text-brand-500" />
+        <span>مقصدهای روز {{ activeDay }}</span>
+      </h2>
 
-      <div v-if="overlapWarning" class="text-xs bg-amber-50 dark:bg-amber-900/30 text-amber-700 dark:text-amber-200 rounded-xl p-3">
-        ⚠️ زمان این مقصد با مقصد دیگری در همین روز همپوشانی دارد. بهتر است کمی زمان شناور بین مقصدها در نظر بگیری تا اگر طول کشید، برنامه‌ات به‌هم نریزد.
+      <div v-if="overlapWarning" class="flex items-start gap-2 text-xs bg-amber-50 dark:bg-amber-900/30 text-amber-700 dark:text-amber-200 rounded-xl p-3">
+        <AppIcon name="warning" :size="16" class="shrink-0 mt-0.5" />
+        <span>زمان این مقصد با مقصد دیگری در همین روز همپوشانی دارد. بهتر است کمی زمان شناور بین مقصدها در نظر بگیری تا اگر طول کشید، برنامه‌ات به‌هم نریزد.</span>
       </div>
 
       <DestinationCard v-for="d in trip.destinationsForDay(activeDay)" :key="d.id" :destination="d" @remove="removeDestination" />
@@ -128,17 +133,27 @@ function finish() {
         <label class="text-xs text-slate-400 block mb-1">توضیح کوتاه (اختیاری)</label>
         <input v-model="destinationForm.note" type="text" placeholder="متلا بلیط از قبل بگیر" class="w-full min-h-[40px] rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 px-3 text-sm" />
       </div>
-      <button type="button" class="w-full min-h-[40px] rounded-lg bg-brand-500 text-white text-sm font-medium" @click="addDestination">+ افزودن مقصد</button>
+      <button type="button" class="w-full min-h-[40px] rounded-lg bg-brand-500 text-white text-sm font-medium flex items-center justify-center gap-1.5 hover:bg-brand-600 transition-colors" @click="addDestination">
+        <AppIcon name="plus" :size="16" />
+        <span>افزودن مقصد</span>
+      </button>
     </div>
 
     <div class="rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-4 space-y-3">
       <div class="flex items-center justify-between">
-        <h2 class="text-sm font-semibold">🏨 اقامتگاه روز {{ activeDay }}</h2>
-        <span v-if="justSavedAccommodation" class="text-xs text-brand-600 font-medium">ذخیره شد ✓</span>
+        <h2 class="text-sm font-semibold flex items-center gap-1.5">
+          <AppIcon name="hotel" :size="16" class="text-brand-500" />
+          <span>اقامتگاه روز {{ activeDay }}</span>
+        </h2>
+        <span v-if="justSavedAccommodation" class="inline-flex items-center gap-1 text-xs text-brand-600 font-medium">
+          <AppIcon name="check" :size="14" />
+          <span>ذخیره شد</span>
+        </span>
       </div>
 
-      <div v-if="showNoAccommodationWarning && !isEditingAccommodation" class="text-xs bg-amber-50 dark:bg-amber-900/30 text-amber-700 dark:text-amber-200 rounded-xl p-3">
-        ⚠️ برای این روز مقصد ثبت کرده‌ای ولی هنوز اقامتگاهی مشخص نکرده‌ای. فراموش نکن قبل از سفر آن را ثبت کنی.
+      <div v-if="showNoAccommodationWarning && !isEditingAccommodation" class="flex items-start gap-2 text-xs bg-amber-50 dark:bg-amber-900/30 text-amber-700 dark:text-amber-200 rounded-xl p-3">
+        <AppIcon name="warning" :size="16" class="shrink-0 mt-0.5" />
+        <span>برای این روز مقصد ثبت کرده‌ای ولی هنوز اقامتگاهی مشخص نکرده‌ای. فراموش نکن قبل از سفر آن را ثبت کنی.</span>
       </div>
 
       <template v-if="isEditingAccommodation">

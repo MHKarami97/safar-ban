@@ -1,6 +1,7 @@
 <script setup>
 import { useTripStore } from '../stores/tripStore'
 import TripCard from '../components/TripCard.vue'
+import AppIcon from '../components/AppIcon.vue'
 
 var store = useTripStore()
 
@@ -20,8 +21,14 @@ var statusOptions = [
         <p class="text-sm text-slate-400 mt-1">{{ store.ongoingTrips.length }} سفر فعال</p>
       </div>
       <div class="flex items-center gap-2">
-        <RouterLink to="/trips/guide" class="min-h-[44px] px-4 rounded-xl border border-slate-300 dark:border-slate-600 text-sm flex items-center justify-center">راهنما</RouterLink>
-        <RouterLink to="/trips/create" class="min-h-[44px] px-4 rounded-xl bg-brand-500 text-white text-sm font-medium flex items-center justify-center">+ سفر جدید</RouterLink>
+        <RouterLink to="/trips/guide" class="min-h-[44px] px-4 rounded-xl border border-slate-300 dark:border-slate-600 text-sm inline-flex items-center justify-center gap-1.5 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors">
+          <AppIcon name="compass" :size="16" />
+          <span>راهنما</span>
+        </RouterLink>
+        <RouterLink to="/trips/create" class="min-h-[44px] px-4 rounded-xl bg-brand-500 hover:bg-brand-600 text-white text-sm font-medium inline-flex items-center justify-center gap-1.5 shadow-sm transition-colors">
+          <AppIcon name="plus" :size="16" />
+          <span>سفر جدید</span>
+        </RouterLink>
       </div>
     </div>
 

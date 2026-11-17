@@ -1,5 +1,6 @@
 <script setup>
 import { ref, computed } from 'vue'
+import AppIcon from './AppIcon.vue'
 
 var props = defineProps({
   items: { type: Array, required: true },
@@ -34,15 +35,21 @@ function submitCustom() {
       <span
         v-for="item in selectedItems"
         :key="item.id"
-        class="inline-flex items-center gap-1 text-xs px-2.5 py-1 rounded-full bg-brand-50 text-brand-700 dark:bg-brand-700/30 dark:text-brand-100"
+        class="inline-flex items-center gap-1.5 text-xs px-2.5 py-1 rounded-full bg-brand-50 text-brand-700 dark:bg-brand-700/30 dark:text-brand-100"
       >
-        {{ item.name }}
-        <button type="button" class="text-brand-500 hover:text-red-500" @click="toggle(item.id)">×</button>
+        <span>{{ item.name }}</span>
+        <button type="button" class="text-brand-500 hover:text-red-500 transition-colors p-0.5" aria-label="حذف" @click="toggle(item.id)">
+          <AppIcon name="close" :size="12" />
+        </button>
       </span>
     </div>
 
-    <button type="button" class="min-h-[40px] px-3 rounded-xl border border-slate-300 dark:border-slate-600 text-xs sm:text-sm w-full text-right" @click="isOpen = !isOpen">
-      {{ isOpen ? 'بستن لیست' : '+ انتخاب یا افزودن مورد' }}
+    <button type="button" class="min-h-[40px] px-3 rounded-xl border border-slate-300 dark:border-slate-600 text-xs sm:text-sm w-full text-right inline-flex items-center justify-between hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors" @click="isOpen = !isOpen">
+      <span class="inline-flex items-center gap-1.5">
+        <AppIcon :name="isOpen ? 'close' : 'plus'" :size="14" />
+        <span>{{ isOpen ? 'بستن لیست' : 'انتخاب یا افزودن مورد' }}</span>
+      </span>
+      <AppIcon name="chevron" :size="16" :class="isOpen ? '-rotate-90' : 'rotate-90'" class="transition-transform text-slate-400" />
     </button>
 
     <div v-if="isOpen" class="mt-2 border border-slate-200 dark:border-slate-700 rounded-xl p-3 space-y-2 bg-slate-50 dark:bg-slate-800/60">
